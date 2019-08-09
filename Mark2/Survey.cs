@@ -14,6 +14,7 @@ namespace Mark2
         Windows.Storage.StorageFolder folder;
         Windows.Storage.StorageFile csv;
         List<Item> items;
+        List<Page> pages;
 
         public Survey(Windows.Storage.StorageFolder folder, Windows.Storage.StorageFile csv)
         {
@@ -21,6 +22,7 @@ namespace Mark2
             System.Diagnostics.Debug.WriteLine(folder.Path);
             this.folder = folder;
             this.csv = csv;
+            pages = new List<Page>();
         }
 
         async public void SetupItems()
@@ -61,8 +63,49 @@ namespace Mark2
                     reader.ReadBytes(fileBytes);
                 }
             }
-            string buffer = System.Text.Encoding.ASCII.GetString(fileBytes);
-            System.Diagnostics.Debug.WriteLine(buffer);
+            string csvString = System.Text.Encoding.ASCII.GetString(fileBytes);
+            List<string> lines = csvString.Split("\n").ToList();
+
+            List<int> vs = new List<int>();
+            List<string> headers = lines[0].Split(',').ToList();
+            headers.RemoveRange(0, 3);
+            for (int i = 0; i < headers.Count() / 4; i++)
+            {
+                vs.Add(int.Parse(headers[i * 4]));
+            }
+
+            lines.RemoveRange(0, 3);
+            foreach (string line in lines)
+            {
+                List<string> values = line.Split(',').ToList();
+                int pageNumber = int.Parse(values[1]);
+                while (pages.Count() < pageNumber)
+                {
+                    pages.Add(new Page());
+                }
+
+                Question question = new Question();
+                question.type = int.Parse(values[2]);
+
+                values.RemoveRange(0, 3);
+                for (int i = 0; i < values.Count() / 4; i++)
+                {
+                    if (values[i * 4].Length > 0 && values[(i * 4) + 1].Length > 0 &&
+                        values[(i * 4) + 2].Length > 0 && values[(i * 4) + 2].Length > 0)
+                    {
+                        Area area = new Area();
+                        area.x = int.Parse(values[i * 4]);
+                        area.y = int.Parse(values[(i * 4) + 1]);
+                        area.w = int.Parse(values[(i * 4) + 2]);
+                        area.h = int.Parse(values[(i * 4) + 3]);
+                        area.v = vs[i];
+
+                        question.areas.Add(area);
+                    }
+                }
+
+                pages[pageNumber - 1].questions.Add(question);
+            }
         }
     }
 }

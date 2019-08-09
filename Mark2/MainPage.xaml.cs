@@ -22,7 +22,7 @@ namespace Mark2
     /// <summary>
     /// それ自体で使用できる空白ページまたはフレーム内に移動できる空白ページ。
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
         IReadOnlyList<Windows.Storage.StorageFile> fileList;
         Windows.Storage.StorageFolder folder;

@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Mark2
+{
+    class Question
+    {
+        public int type;
+        public List<Area> areas;
+
+        public Question()
+        {
+            areas = new List<Area>();
+        }
+    }
+}
