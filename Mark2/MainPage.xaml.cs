@@ -24,11 +24,11 @@ namespace Mark2
     /// </summary>
     public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
-        IReadOnlyList<Windows.Storage.StorageFile> fileList;
         Windows.Storage.StorageFolder folder;
         Windows.Storage.StorageFile csv;
 
-        String folderToken;
+        // IReadOnlyList<Windows.Storage.StorageFile> fileList;
+        // String folderToken;
 
         public MainPage()
         {
@@ -50,7 +50,7 @@ namespace Mark2
 
         private async void OpenCsvButton_Click(object sender, RoutedEventArgs e)
         {
-            Windows.Storage.Pickers.FileOpenPicker picker = new Windows.Storage.Pickers.FileOpenPicker();
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             picker.FileTypeFilter.Add(".csv");
             csv = await picker.PickSingleFileAsync();
@@ -60,13 +60,17 @@ namespace Mark2
             }
         }
 
-        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (folder != null && csv != null)
             {
                 Survey survey = new Survey(folder, csv);
-                await Task.Run(() => survey.SetupItems());
-                await Task.Run(() => survey.SetupPositions());
+                Task a = Task.Run(() => survey.SetupItems());
+                Task b = Task.Run(() => survey.SetupPositions());
+                a.Wait();
+
+                System.Diagnostics.Debug.WriteLine("Recognize");
+                survey.Recognize();
             }
         }
     }

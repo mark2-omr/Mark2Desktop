@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 
 namespace Mark2
 {
-    class Area
+    class Square
     {
         public int x;
         public int y;
         public int w;
         public int h;
-        public int v;
 
-        public Area(int x, int y, int w, int h)
+        public Square(int x, int y, int w, int h)
         {
             this.x = x;
             this.y = y;

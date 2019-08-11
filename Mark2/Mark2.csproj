@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Area.cs" />
+    <Compile Include="Square.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Question.cs" />
     <Compile Include="Item.cs" />
@@ -157,6 +158,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
+    </PackageReference>
+    <PackageReference Include="OpenCvSharp4.Windows">
+      <Version>4.1.0.20190416</Version>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp">
       <Version>1.0.0-beta0006</Version>

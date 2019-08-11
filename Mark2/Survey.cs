@@ -44,11 +44,10 @@ namespace Mark2
 
                 SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
                     = SixLabors.ImageSharp.Image.Load(fileBytes);
-                Item item = new Item();
-                item.image = image;
-                System.Diagnostics.Debug.WriteLine(item.image[0, 0].R.ToString());
+                Item item = new Item(image);
                 items.Add(item);
             }
+            Recognize();
         }
 
         async public void SetupPositions()
@@ -93,11 +92,8 @@ namespace Mark2
                     if (values[i * 4].Length > 0 && values[(i * 4) + 1].Length > 0 &&
                         values[(i * 4) + 2].Length > 0 && values[(i * 4) + 2].Length > 0)
                     {
-                        Area area = new Area();
-                        area.x = int.Parse(values[i * 4]);
-                        area.y = int.Parse(values[(i * 4) + 1]);
-                        area.w = int.Parse(values[(i * 4) + 2]);
-                        area.h = int.Parse(values[(i * 4) + 3]);
+                        Area area = new Area(int.Parse(values[i * 4]), int.Parse(values[i * 4 + 1]),
+                            int.Parse(values[i * 4 + 2]), int.Parse(values[i * 4 + 3]));
                         area.v = vs[i];
 
                         question.areas.Add(area);
@@ -105,6 +101,14 @@ namespace Mark2
                 }
 
                 pages[pageNumber - 1].questions.Add(question);
+            }
+        }
+
+        public void Recognize()
+        {
+            for (int i = 0; i < items.Count(); i++)
+            {
+                items[i].DetectSquares();
             }
         }
     }
