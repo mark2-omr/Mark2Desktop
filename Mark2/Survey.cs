@@ -11,17 +11,14 @@ namespace Mark2
 {
     class Survey
     {
-        Windows.Storage.StorageFolder folder;
-        Windows.Storage.StorageFile csv;
+        public Windows.Storage.StorageFolder folder;
+        public Windows.Storage.StorageFile csv;
         List<Item> items;
         List<Page> pages;
 
-        public Survey(Windows.Storage.StorageFolder folder, Windows.Storage.StorageFile csv)
-        {
+        // public Survey(Windows.Storage.StorageFolder folder, Windows.Storage.StorageFile csv)
+        public Survey(){
             items = new List<Item>();
-            System.Diagnostics.Debug.WriteLine(folder.Path);
-            this.folder = folder;
-            this.csv = csv;
             pages = new List<Page>();
         }
 
@@ -47,7 +44,6 @@ namespace Mark2
                 Item item = new Item(image);
                 items.Add(item);
             }
-            Recognize();
         }
 
         async public void SetupPositions()
@@ -108,7 +104,9 @@ namespace Mark2
         {
             for (int i = 0; i < items.Count(); i++)
             {
+                items[i].page = pages[i % pages.Count()];
                 items[i].DetectSquares();
+                items[i].Recognize();
             }
         }
     }

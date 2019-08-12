@@ -24,15 +24,14 @@ namespace Mark2
     /// </summary>
     public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
-        Windows.Storage.StorageFolder folder;
-        Windows.Storage.StorageFile csv;
-
+        Survey survey;
         // IReadOnlyList<Windows.Storage.StorageFile> fileList;
         // String folderToken;
 
         public MainPage()
         {
             InitializeComponent();
+            survey = new Survey();
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -40,9 +39,12 @@ namespace Mark2
             var picker = new Windows.Storage.Pickers.FolderPicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             picker.FileTypeFilter.Add("*");
-            folder = await picker.PickSingleFolderAsync();
+            var folder = await picker.PickSingleFolderAsync();
             if (folder != null)
             {
+                survey.folder = folder;
+                survey.SetupItems();
+
                 // folderToken = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(folder);
                 folderPathTextBlock.Text = folder.Path;
             }
@@ -53,22 +55,20 @@ namespace Mark2
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             picker.FileTypeFilter.Add(".csv");
-            csv = await picker.PickSingleFileAsync();
+            var csv = await picker.PickSingleFileAsync();
             if (csv != null)
             {
+                survey.csv = csv;
+                survey.SetupPositions();
+
                 csvPathTextBlock.Text = csv.Path;
             }
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            if (folder != null && csv != null)
+            if (survey.folder != null && survey.csv != null)
             {
-                Survey survey = new Survey(folder, csv);
-                Task a = Task.Run(() => survey.SetupItems());
-                Task b = Task.Run(() => survey.SetupPositions());
-                a.Wait();
-
                 System.Diagnostics.Debug.WriteLine("Recognize");
                 survey.Recognize();
             }

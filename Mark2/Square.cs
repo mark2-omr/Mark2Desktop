@@ -12,6 +12,8 @@ namespace Mark2
         public int y;
         public int w;
         public int h;
+        public int cx;
+        public int cy;
 
         public Square(int x, int y, int w, int h)
         {
@@ -19,6 +21,9 @@ namespace Mark2
             this.y = y;
             this.w = w;
             this.h = h;
+
+            this.cx = x + (w / 2);
+            this.cy = y + (h / 2);
         }
     }
 }
