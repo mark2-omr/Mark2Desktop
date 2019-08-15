@@ -65,12 +65,22 @@ namespace Mark2
             }
         }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (survey.folder != null && survey.csv != null)
             {
                 System.Diagnostics.Debug.WriteLine("Recognize");
-                survey.Recognize();
+                var results = survey.Recognize();
+
+                var picker = new Windows.Storage.Pickers.FileSavePicker();
+                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+                picker.SuggestedFileName = "result";
+                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+                if (file != null)
+                {
+                    await Windows.Storage.FileIO.WriteTextAsync(file, results);
+                }
             }
         }
     }

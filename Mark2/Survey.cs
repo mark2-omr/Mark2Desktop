@@ -100,7 +100,7 @@ namespace Mark2
             }
         }
 
-        public void Recognize()
+        public String Recognize()
         {
             for (int i = 0; i < items.Count(); i++)
             {
@@ -108,6 +108,25 @@ namespace Mark2
                 items[i].DetectSquares();
                 items[i].Recognize();
             }
+
+            var buffer = "";
+            for (int i = 0; i < items.Count(); i++)
+            {
+                foreach (var _answers in items[i].answers)
+                {
+                    foreach(var answer in _answers)
+                    {
+                        buffer += answer.ToString() + ";";
+                    }
+                    buffer += ",";
+                }
+
+                if ((i + 1) % pages.Count() == 0)
+                {
+                    buffer += "\n";
+                }
+            }
+            return buffer;
         }
     }
 }

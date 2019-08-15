@@ -16,15 +16,16 @@ namespace Mark2
         public SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
         List<Square> squares;
         public Page page;
+        public List<List<int>> answers;
 
         public Item(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image)
         {
             this.image = image;
+            answers = new List<List<int>>();
         }
 
         public void DetectSquares()
         {
-            System.Diagnostics.Debug.WriteLine("detect");
             var squares = new List<Square>();
             var margin = new int[] { (int)(image.Width * 0.01), (int)(image.Height * 0.01) };
             var size = new int[] { (int)(image.Width * 0.3), (int)(image.Height * 0.08) };
@@ -57,7 +58,6 @@ namespace Mark2
                     && sq.Width / (double)(sq.Width + sq.Height) < 0.7)
                 {
                     square = new Square(topLeft[0] + sq.X, topLeft[1] + sq.Y, sq.Width, sq.Height);
-                    System.Diagnostics.Debug.WriteLine(square.ToString());
                 }
             }
             // Cv2.ImShow("debug", img);
@@ -70,13 +70,32 @@ namespace Mark2
         {
             foreach(var question in page.questions)
             {
+                var _answers = new List<int>();
                 if (question.type == 1)
                 {
                     foreach (var area in question.areas)
                     {
-                        var sample = BiLenearInterpoltation(area.x, area.y);
+                        var topLeft = BiLenearInterpoltation(area.x, area.y);
+                        var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
+
+                        int count = 0;
+                        for (int i = topLeft[0]; i < bottomRight[0]; i++)
+                        {
+                            for (int j = topLeft[1]; j < bottomRight[1]; j++)
+                            {
+                                if (image[i, j].R < 128)
+                                {
+                                    count++;
+                                }
+                            }
+                        }
+                        if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > 0.7)
+                        {
+                            _answers.Add(area.v);
+                        }
                     }
                 }
+                answers.Add(_answers);
             }
         }
 
