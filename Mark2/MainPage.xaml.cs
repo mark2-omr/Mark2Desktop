@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Mark2
 {
     /// <summary>
@@ -67,21 +70,56 @@ namespace Mark2
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            if (survey.folder != null && survey.csv != null)
-            {
-                System.Diagnostics.Debug.WriteLine("Recognize");
-                var results = survey.Recognize();
+            //if (survey.folder != null && survey.csv != null)
+            //{
+            //    System.Diagnostics.Debug.WriteLine("Recognize");
+            //    var results = survey.Recognize();
 
-                var picker = new Windows.Storage.Pickers.FileSavePicker();
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-                picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
-                picker.SuggestedFileName = "result";
-                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
-                if (file != null)
+            //    var picker = new Windows.Storage.Pickers.FileSavePicker();
+            //    picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            //    picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+            //    picker.SuggestedFileName = "result";
+            //    Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+            //    if (file != null)
+            //    {
+            //        await Windows.Storage.FileIO.WriteTextAsync(file, results);
+            //    }
+            //}
+            Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
+
+            Frame appWindowFrame = new Frame();
+            appWindowFrame.Navigate(typeof(ProgressPage));
+            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowFrame);
+
+            ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
+            progressPage.appWindow = appWindow;
+
+            await appWindow.TryShowAsync();
+
+            Task task = new Task(async () =>
+            {
+                for (int i = 0; i <= 10; i++)
                 {
-                    await Windows.Storage.FileIO.WriteTextAsync(file, results);
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        progressPage.setProgress(i * 10);
+                    });
+                    Thread.Sleep(1000);
+                    System.Diagnostics.Debug.WriteLine("running");
                 }
-            }
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                {
+                    await appWindow.CloseAsync();
+                });
+                
+            });
+
+            task.Start();
+         
+            task.Wait();
+           
+
+
         }
     }
 }
