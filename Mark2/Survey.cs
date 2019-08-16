@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
+using System.Threading;
+
 namespace Mark2
 {
     class Survey
@@ -100,32 +102,43 @@ namespace Mark2
             }
         }
 
-        public String Recognize()
+        public String Recognize(Action<int, int> action)
         {
-            for (int i = 0; i < items.Count(); i++)
-            {
-                items[i].page = pages[i % pages.Count()];
-                items[i].DetectSquares();
-                items[i].Recognize();
-            }
+            var buffer = "OK";
 
-            var buffer = "";
-            for (int i = 0; i < items.Count(); i++)
-            {
-                foreach (var _answers in items[i].answers)
-                {
-                    foreach(var answer in _answers)
-                    {
-                        buffer += answer.ToString() + ";";
-                    }
-                    buffer += ",";
-                }
 
-                if ((i + 1) % pages.Count() == 0)
-                {
-                    buffer += "\n";
-                }
+            for (int i = 0; i <= 10; i++)
+            {
+                System.Diagnostics.Debug.WriteLine("i = {0}", i);
+                action(i, 10);
+                Thread.Sleep(500);
             }
+            //for (int i = 0; i < items.Count(); i++)
+            //{
+            //    items[i].page = pages[i % pages.Count()];
+            //    items[i].DetectSquares();
+            //    items[i].Recognize();
+
+            //    action(i, items.Count());
+            //}
+
+            //var buffer = "";
+            //for (int i = 0; i < items.Count(); i++)
+            //{
+            //    foreach (var _answers in items[i].answers)
+            //    {
+            //        foreach(var answer in _answers)
+            //        {
+            //            buffer += answer.ToString() + ";";
+            //        }
+            //        buffer += ",";
+            //    }
+
+            //    if ((i + 1) % pages.Count() == 0)
+            //    {
+            //        buffer += "\n";
+            //    }
+            //}
             return buffer;
         }
     }

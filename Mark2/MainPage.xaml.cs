@@ -18,7 +18,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Mark2
 {
@@ -30,6 +29,7 @@ namespace Mark2
         Survey survey;
         // IReadOnlyList<Windows.Storage.StorageFile> fileList;
         // String folderToken;
+        String resultCSV = null;
 
         public MainPage()
         {
@@ -70,11 +70,69 @@ namespace Mark2
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            //var picker = new Windows.Storage.Pickers.FileSavePicker();
+            //picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            //picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+            //picker.SuggestedFileName = "result";
+            //Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+
+
+            Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
+
+            Frame appWindowFrame = new Frame();
+            appWindowFrame.Navigate(typeof(ProgressPage));
+            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowFrame);
+
+
+
+            ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
+            progressPage.appWindow = appWindow;
+
+            await appWindow.TryShowAsync();
+
             //if (survey.folder != null && survey.csv != null)
             //{
-            //    System.Diagnostics.Debug.WriteLine("Recognize");
-            //    var results = survey.Recognize();
+            System.Diagnostics.Debug.WriteLine("Recognize");
 
+            Task taskMain = new Task(() => { 
+
+                resultCSV = survey.Recognize((i, max) =>
+                {
+                    Task task = new Task(async () =>
+                    {
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                        {
+
+                            progressPage.setProgress(i * 10);
+                        });
+                    });
+                    task.Start();
+                });
+
+                
+                System.Diagnostics.Debug.WriteLine("finished");
+
+                Task taskClose = new Task(async () => {
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    {
+                        await appWindow.CloseAsync();
+                    });
+                });
+                taskClose.Start();
+
+                //ShowFileSave(results);
+
+               
+
+
+
+            });
+
+            taskMain.Start();
+            
+
+
+            //string results = "";
             //    var picker = new Windows.Storage.Pickers.FileSavePicker();
             //    picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             //    picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
@@ -84,42 +142,49 @@ namespace Mark2
             //    {
             //        await Windows.Storage.FileIO.WriteTextAsync(file, results);
             //    }
-            //}
-            Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
-
-            Frame appWindowFrame = new Frame();
-            appWindowFrame.Navigate(typeof(ProgressPage));
-            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowFrame);
-
-            ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
-            progressPage.appWindow = appWindow;
-
-            await appWindow.TryShowAsync();
-
-            Task task = new Task(async () =>
-            {
-                for (int i = 0; i <= 10; i++)
-                {
-                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-                        progressPage.setProgress(i * 10);
-                    });
-                    Thread.Sleep(1000);
-                    System.Diagnostics.Debug.WriteLine("running");
-                }
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    await appWindow.CloseAsync();
-                });
                 
-            });
-
-            task.Start();
-         
-            task.Wait();
-           
+            //}
 
 
+
+
+            //Task task = new Task(async () =>
+            //{
+            //    for (int i = 0; i <= 10; i++)
+            //    {
+            //        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            //        {
+            //            progressPage.setProgress(i * 10);
+            //        });
+            //        Thread.Sleep(1000);
+            //        System.Diagnostics.Debug.WriteLine("running");
+            //    }
+            //    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            //    {
+            //        await appWindow.CloseAsync();
+            //    });
+
+            //});
+
+            //task.Start();
+
+            //task.Wait();
+
+
+
+        }
+
+        private async void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileSavePicker();
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+            picker.SuggestedFileName = "result";
+            Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                await Windows.Storage.FileIO.WriteTextAsync(file, this.resultCSV);
+            }
         }
     }
 }
