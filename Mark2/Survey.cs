@@ -104,41 +104,33 @@ namespace Mark2
 
         public String Recognize(Action<int, int> action)
         {
-            var buffer = "OK";
-
-
-            for (int i = 0; i <= 10; i++)
+            for (int i = 0; i < items.Count(); i++)
             {
-                System.Diagnostics.Debug.WriteLine("i = {0}", i);
-                action(i, 10);
-                Thread.Sleep(500);
+                items[i].page = pages[i % pages.Count()];
+                items[i].DetectSquares();
+                items[i].Recognize();
+
+                action(i, items.Count());
+                //Thread.Sleep(500);
             }
-            //for (int i = 0; i < items.Count(); i++)
-            //{
-            //    items[i].page = pages[i % pages.Count()];
-            //    items[i].DetectSquares();
-            //    items[i].Recognize();
 
-            //    action(i, items.Count());
-            //}
+            var buffer = "";
+            for (int i = 0; i < items.Count(); i++)
+            {
+                foreach (var _answers in items[i].answers)
+                {
+                    foreach (var answer in _answers)
+                    {
+                        buffer += answer.ToString() + ";";
+                    }
+                    buffer += ",";
+                }
 
-            //var buffer = "";
-            //for (int i = 0; i < items.Count(); i++)
-            //{
-            //    foreach (var _answers in items[i].answers)
-            //    {
-            //        foreach(var answer in _answers)
-            //        {
-            //            buffer += answer.ToString() + ";";
-            //        }
-            //        buffer += ",";
-            //    }
-
-            //    if ((i + 1) % pages.Count() == 0)
-            //    {
-            //        buffer += "\n";
-            //    }
-            //}
+                if ((i + 1) % pages.Count() == 0)
+                {
+                    buffer += "\n";
+                }
+            }
             return buffer;
         }
     }
