@@ -70,7 +70,7 @@ namespace Mark2
             if (survey.folder != null && survey.csv != null)
             {
                 System.Diagnostics.Debug.WriteLine("Recognize");
-                var results = survey.Recognize();
+                await survey.Recognize();
 
                 var picker = new Windows.Storage.Pickers.FileSavePicker();
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
@@ -79,7 +79,7 @@ namespace Mark2
                 Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
                 if (file != null)
                 {
-                    await Windows.Storage.FileIO.WriteTextAsync(file, results);
+                    await Windows.Storage.FileIO.WriteTextAsync(file, survey.resultBuffer);
                 }
             }
         }

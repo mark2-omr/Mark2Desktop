@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Windows.AI.MachineLearning;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
@@ -14,13 +15,16 @@ namespace Mark2
     class Item
     {
         public SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
+        public LearningModel mnistModel;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
 
-        public Item(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image)
+        public Item(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image,
+            LearningModel mnistModel)
         {
             this.image = image;
+            this.mnistModel = mnistModel;
             answers = new List<List<int>>();
         }
 
@@ -66,9 +70,10 @@ namespace Mark2
             return square;
         }
 
-        public void Recognize()
+        public async Task Recognize()
         {
-            foreach(var question in page.questions)
+            var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
+            foreach (var question in page.questions)
             {
                 var _answers = new List<int>();
                 if (question.type == 1)
@@ -95,6 +100,52 @@ namespace Mark2
                         }
                     }
                 }
+                else if (question.type == 2)
+                {
+                    var binding = new LearningModelBinding(mnistSession);
+
+                    foreach (var area in question.areas)
+                    {
+                        var topLeft = BiLenearInterpoltation(area.x, area.y);
+                        var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
+ 
+                        var cloneImage = image.Clone(img => img
+                            .Crop(new Rectangle(topLeft[0], topLeft[1],
+                                bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
+                            .Resize(28, 28));
+
+                        var data = new float[1 * 1 * 28 * 28];
+                        int i = 0;
+                        for (int y = 0; y < 28; y++)
+                        {
+                            for (int x = 0; x < 28; x++)
+                            {
+                                data[i] = 0.0f;
+                                if (cloneImage[x, y].R < 128)
+                                {
+                                    data[i] = 1.0f;
+                                }
+                                i++;
+                            }
+                        }
+
+                        TensorFloat tensor = TensorFloat.CreateFromArray(new long[] { 1, 1, 28, 28 }, data);
+                        binding.Bind("0", tensor);
+
+                        var modelOutput = await mnistSession.EvaluateAsync(binding, "run");
+                        List<float> v = new List<float>();
+                        foreach (var item in modelOutput.Outputs)
+                        {
+                            System.Diagnostics.Debug.WriteLine("{0}:{1}", item.Key, item.Value);
+                            TensorFloat outTensor = (TensorFloat)item.Value;
+                            v = outTensor.GetAsVectorView().ToList();
+                        }
+
+                        System.Diagnostics.Debug.WriteLine(v.IndexOf(v.Max()));
+                        _answers.Add(v.IndexOf(v.Max()));
+                    }
+                }
+
                 answers.Add(_answers);
             }
         }

@@ -166,6 +166,9 @@
       <Version>1.0.0-beta0006</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\mnist_8.onnx" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
