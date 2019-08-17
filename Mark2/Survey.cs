@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Windows.Storage;
+using Windows.AI.MachineLearning;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -17,6 +20,7 @@ namespace Mark2
         public Windows.Storage.StorageFile csv;
         List<Item> items;
         List<Page> pages;
+        public string resultBuffer;
 
         // public Survey(Windows.Storage.StorageFolder folder, Windows.Storage.StorageFile csv)
         public Survey(){
@@ -27,6 +31,10 @@ namespace Mark2
         async public void SetupItems()
         {
             IReadOnlyList<Windows.Storage.StorageFile> files = await folder.GetFilesAsync();
+
+            LearningModel mnistModel;
+            var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
+            mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
 
             foreach (var file in files)
             {
@@ -43,7 +51,7 @@ namespace Mark2
 
                 SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
                     = SixLabors.ImageSharp.Image.Load(fileBytes);
-                Item item = new Item(image);
+                Item item = new Item(image, mnistModel);
                 items.Add(item);
             }
         }
@@ -75,6 +83,11 @@ namespace Mark2
             foreach (string line in lines)
             {
                 List<string> values = line.Split(',').ToList();
+                if (values.Count() < 3)
+                {
+                    continue;
+                }
+
                 int pageNumber = int.Parse(values[1]);
                 while (pages.Count() < pageNumber)
                 {
@@ -102,13 +115,13 @@ namespace Mark2
             }
         }
 
-        public String Recognize(Action<int, int> action)
+        public async String Recognize(Action<int, int> action)
         {
             for (int i = 0; i < items.Count(); i++)
             {
                 items[i].page = pages[i % pages.Count()];
                 items[i].DetectSquares();
-                items[i].Recognize();
+                await items[i].Recognize();
 
                 action(i, items.Count());
                 //Thread.Sleep(500);
@@ -119,10 +132,7 @@ namespace Mark2
             {
                 foreach (var _answers in items[i].answers)
                 {
-                    foreach (var answer in _answers)
-                    {
-                        buffer += answer.ToString() + ";";
-                    }
+                    buffer += String.Join(";", _answers);
                     buffer += ",";
                 }
 
@@ -131,7 +141,8 @@ namespace Mark2
                     buffer += "\n";
                 }
             }
-            return buffer;
+            // return buffer;
+            resultBuffer = buffer;
         }
     }
 }

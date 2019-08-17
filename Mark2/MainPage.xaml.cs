@@ -89,7 +89,7 @@ namespace Mark2
 
                 Task taskMain = new Task(() =>
                 {
-                    resultCSV = survey.Recognize((i, max) =>
+                    resultCSV = await survey.Recognize((i, max) =>
                     {
                         Task task = new Task(async () =>
                         {
