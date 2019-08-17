@@ -46,5 +46,6 @@
         <Button Content="Start" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                 Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Click="StartButton_Click"/>
+        <Button x:Name="buttonSave" Content="Save" Grid.Column="2" Margin="121,0,0,0" Grid.Row="3" Click="ButtonSave_Click"/>
     </Grid>
 </Page>

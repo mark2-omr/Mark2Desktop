@@ -10,6 +10,8 @@ using Windows.AI.MachineLearning;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
+using System.Threading;
+
 namespace Mark2
 {
     class Survey
@@ -113,13 +115,21 @@ namespace Mark2
             }
         }
 
-        public async Task Recognize()
+        public async Task Recognize(Action<int, int> action)
         {
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    action(i, 10);
+            //    Thread.Sleep(500);
+            //}
+
             for (int i = 0; i < items.Count(); i++)
             {
                 items[i].page = pages[i % pages.Count()];
                 items[i].DetectSquares();
                 await items[i].Recognize();
+
+                action(i, items.Count());
             }
 
             var buffer = "";

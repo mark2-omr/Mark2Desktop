@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
+using System.Threading;
+
 namespace Mark2
 {
     /// <summary>
@@ -27,6 +29,7 @@ namespace Mark2
         Survey survey;
         // IReadOnlyList<Windows.Storage.StorageFile> fileList;
         // String folderToken;
+        String resultCSV = null;
 
         public MainPage()
         {
@@ -67,20 +70,67 @@ namespace Mark2
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
+
+            Frame appWindowFrame = new Frame();
+            appWindowFrame.Navigate(typeof(ProgressPage));
+            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowFrame);
+
+
+            ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
+            progressPage.appWindow = appWindow;
+
+
             if (survey.folder != null && survey.csv != null)
             {
-                System.Diagnostics.Debug.WriteLine("Recognize");
-                await survey.Recognize();
+                appWindow.RequestSize(new Size(800, 300));
+                await appWindow.TryShowAsync();
 
-                var picker = new Windows.Storage.Pickers.FileSavePicker();
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-                picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
-                picker.SuggestedFileName = "result";
-                Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
-                if (file != null)
+                System.Diagnostics.Debug.WriteLine("Recognize");
+
+                Task taskMain = new Task(async () =>
                 {
-                    await Windows.Storage.FileIO.WriteTextAsync(file, survey.resultBuffer);
-                }
+                    System.Diagnostics.Debug.WriteLine("Recognizing");
+
+                    await survey.Recognize(async (i, max) =>
+                    {
+                        await Task.Run(async () =>
+                        {
+                            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                            {
+                                progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
+                            });
+                        });
+                    });
+
+
+                    System.Diagnostics.Debug.WriteLine("finished");
+                    resultCSV = survey.resultBuffer;
+
+                    await Task.Run(async () =>
+                    {
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                        {
+                            await appWindow.CloseAsync();
+                        });
+                    });
+
+                });
+
+                taskMain.Start();
+            }
+        }
+
+        private async void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileSavePicker();
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+            picker.SuggestedFileName = "result";
+            Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                await Windows.Storage.FileIO.WriteTextAsync(file, this.resultCSV);
             }
         }
     }
