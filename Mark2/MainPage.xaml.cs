@@ -87,9 +87,11 @@ namespace Mark2
 
                 System.Diagnostics.Debug.WriteLine("Recognize");
 
-                Task taskMain = new Task(() =>
+                Task taskMain = new Task(async () =>
                 {
-                    resultCSV = await survey.Recognize((i, max) =>
+                    System.Diagnostics.Debug.WriteLine("Recognizing");
+
+                    await survey.Recognize((i, max) =>
                     {
                         Task task = new Task(async () =>
                         {
@@ -103,6 +105,7 @@ namespace Mark2
 
 
                     System.Diagnostics.Debug.WriteLine("finished");
+                    resultCSV = survey.resultBuffer;
 
                     Task taskClose = new Task(async () =>
                     {

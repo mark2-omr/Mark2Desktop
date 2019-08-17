@@ -115,8 +115,14 @@ namespace Mark2
             }
         }
 
-        public async String Recognize(Action<int, int> action)
+        public async Task Recognize(Action<int, int> action)
         {
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    action(i, 10);
+            //    Thread.Sleep(500);
+            //}
+
             for (int i = 0; i < items.Count(); i++)
             {
                 items[i].page = pages[i % pages.Count()];
