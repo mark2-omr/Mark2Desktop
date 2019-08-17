@@ -83,6 +83,7 @@ namespace Mark2
 
             if (survey.folder != null && survey.csv != null)
             {
+                appWindow.RequestSize(new Size(800, 300));
                 await appWindow.TryShowAsync();
 
                 System.Diagnostics.Debug.WriteLine("Recognize");
@@ -91,30 +92,29 @@ namespace Mark2
                 {
                     System.Diagnostics.Debug.WriteLine("Recognizing");
 
-                    await survey.Recognize((i, max) =>
+                    await survey.Recognize(async (i, max) =>
                     {
-                        Task task = new Task(async () =>
+                        await Task.Run(async () =>
                         {
                             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
-                                progressPage.setProgress(i * 10);
+                                progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
                             });
                         });
-                        task.Start();
                     });
 
 
                     System.Diagnostics.Debug.WriteLine("finished");
                     resultCSV = survey.resultBuffer;
 
-                    Task taskClose = new Task(async () =>
+                    await Task.Run(async () =>
                     {
                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                         {
                             await appWindow.CloseAsync();
                         });
                     });
-                    taskClose.Start();
+
                 });
 
                 taskMain.Start();

@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ProgressBar x:Name="progressBar" HorizontalAlignment="Center" Height="102" Margin="0,45,0,0" VerticalAlignment="Top" Width="1424"/>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Stretch" Height="100" Margin="10,45,10,0" VerticalAlignment="Center"/>
 
     </Grid>
 </Page>

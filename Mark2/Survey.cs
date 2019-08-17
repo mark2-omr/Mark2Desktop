@@ -130,7 +130,6 @@ namespace Mark2
                 await items[i].Recognize();
 
                 action(i, items.Count());
-                //Thread.Sleep(500);
             }
 
             var buffer = "";
