@@ -14,13 +14,13 @@ namespace Mark2
 {
     class Item
     {
-        public SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
+        public Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
         public LearningModel mnistModel;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
 
-        public Item(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image,
+        public Item(Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image,
             LearningModel mnistModel)
         {
             this.image = image;
@@ -140,12 +140,9 @@ namespace Mark2
                             TensorFloat outTensor = (TensorFloat)item.Value;
                             v = outTensor.GetAsVectorView().ToList();
                         }
-
-                        System.Diagnostics.Debug.WriteLine(v.IndexOf(v.Max()));
                         _answers.Add(v.IndexOf(v.Max()));
                     }
                 }
-
                 answers.Add(_answers);
             }
         }

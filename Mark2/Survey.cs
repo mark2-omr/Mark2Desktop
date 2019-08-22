@@ -133,8 +133,25 @@ namespace Mark2
             }
 
             var buffer = "";
+
+            var numQuestions = 0;
+            foreach (var page in pages)
+            {
+                numQuestions += page.questions.Count();
+            }
+            for(var i = 0; i < numQuestions; i++)
+            {
+                buffer += "," + (i + 1).ToString();
+            }
+            buffer += "\n";
+
+            var label = 1;
             for (int i = 0; i < items.Count(); i++)
             {
+                if ((i + 1) % pages.Count() == 1)
+                {
+                    buffer += label.ToString() + ",";
+                }
                 foreach (var _answers in items[i].answers)
                 {
                     buffer += String.Join(";", _answers);
@@ -144,6 +161,7 @@ namespace Mark2
                 if ((i + 1) % pages.Count() == 0)
                 {
                     buffer += "\n";
+                    label++;
                 }
             }
             // return buffer;

@@ -76,10 +76,8 @@ namespace Mark2
             appWindowFrame.Navigate(typeof(ProgressPage));
             Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowFrame);
 
-
             ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
             progressPage.appWindow = appWindow;
-
 
             if (survey.folder != null && survey.csv != null)
             {
@@ -91,6 +89,7 @@ namespace Mark2
                 Task taskMain = new Task(async () =>
                 {
                     System.Diagnostics.Debug.WriteLine("Recognizing");
+                    System.Diagnostics.Debug.WriteLine(thresholdSlider.Value);
 
                     await survey.Recognize(async (i, max) =>
                     {
@@ -102,7 +101,6 @@ namespace Mark2
                             });
                         });
                     });
-
 
                     System.Diagnostics.Debug.WriteLine("finished");
                     resultCSV = survey.resultBuffer;
