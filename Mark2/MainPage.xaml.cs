@@ -70,6 +70,8 @@ namespace Mark2
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            survey.threshold = thresholdSlider.Value / 100.0;
+
             Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
 
             Frame appWindowFrame = new Frame();
@@ -89,9 +91,8 @@ namespace Mark2
                 Task taskMain = new Task(async () =>
                 {
                     System.Diagnostics.Debug.WriteLine("Recognizing");
-                    System.Diagnostics.Debug.WriteLine(thresholdSlider.Value);
 
-                    await survey.Recognize(async (i, max) =>
+                    await survey.Recognize(async(i, max) =>
                     {
                         await Task.Run(async () =>
                         {

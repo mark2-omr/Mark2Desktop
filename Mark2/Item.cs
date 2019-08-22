@@ -70,7 +70,7 @@ namespace Mark2
             return square;
         }
 
-        public async Task Recognize()
+        public async Task Recognize(double threshold)
         {
             var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
             foreach (var question in page.questions)
@@ -94,7 +94,7 @@ namespace Mark2
                                 }
                             }
                         }
-                        if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > 0.7)
+                        if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > threshold)
                         {
                             _answers.Add(area.v);
                         }

@@ -18,6 +18,7 @@ namespace Mark2
     {
         public Windows.Storage.StorageFolder folder;
         public Windows.Storage.StorageFile csv;
+        public double threshold;
         List<Item> items;
         List<Page> pages;
         public string resultBuffer;
@@ -127,7 +128,7 @@ namespace Mark2
             {
                 items[i].page = pages[i % pages.Count()];
                 items[i].DetectSquares();
-                await items[i].Recognize();
+                await items[i].Recognize(threshold);
 
                 action(i, items.Count());
             }
