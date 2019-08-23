@@ -35,6 +35,7 @@ namespace Mark2
         {
             InitializeComponent();
             survey = new Survey();
+            buttonSave.IsEnabled = false;
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -111,6 +112,10 @@ namespace Mark2
                     {
                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                         {
+                            if (resultCSV != null)
+                            {
+                                buttonSave.IsEnabled = true;
+                            }
                             await appWindow.CloseAsync();
                         });
                     });
