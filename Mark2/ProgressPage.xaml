@@ -9,7 +9,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
         <ProgressBar x:Name="progressBar" HorizontalAlignment="Stretch" Height="100" Margin="10,45,10,0" VerticalAlignment="Center"/>
+        <Button x:Name="buttonCancel" Content="Cancel" Margin="50,0,50,0" Click="ButtonCancel_Click" HorizontalAlignment="Stretch" Height="226" Grid.Row="1"/>
 
     </Grid>
 </Page>

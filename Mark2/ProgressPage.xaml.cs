@@ -23,6 +23,7 @@ namespace Mark2
     public sealed partial class ProgressPage : Windows.UI.Xaml.Controls.Page
     {
         public Windows.UI.WindowManagement.AppWindow appWindow { get; set; }
+        public Survey survey { get; set; }
         public ProgressPage()
         {
             this.InitializeComponent();
@@ -32,6 +33,11 @@ namespace Mark2
         {
 
             this.progressBar.Value = value;
+        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            survey.StopRecognize = true;
         }
     }
 }

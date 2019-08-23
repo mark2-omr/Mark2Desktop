@@ -80,6 +80,7 @@ namespace Mark2
 
             ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
             progressPage.appWindow = appWindow;
+            progressPage.survey = survey;
 
             if (survey.folder != null && survey.csv != null)
             {

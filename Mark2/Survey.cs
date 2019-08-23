@@ -14,7 +14,7 @@ using System.Threading;
 
 namespace Mark2
 {
-    class Survey
+    public class Survey
     {
         public Windows.Storage.StorageFolder folder;
         public Windows.Storage.StorageFile csv;
@@ -22,11 +22,13 @@ namespace Mark2
         List<Item> items;
         List<Page> pages;
         public string resultBuffer;
+        public bool StopRecognize { get; set; }
 
         // public Survey(Windows.Storage.StorageFolder folder, Windows.Storage.StorageFile csv)
         public Survey(){
             items = new List<Item>();
             pages = new List<Page>();
+            StopRecognize = false;
         }
 
         async public void SetupItems()
@@ -126,12 +128,18 @@ namespace Mark2
 
             for (int i = 0; i < items.Count(); i++)
             {
+                if (StopRecognize)
+                {
+                    break;
+                }
                 items[i].page = pages[i % pages.Count()];
                 items[i].DetectSquares();
                 await items[i].Recognize(threshold);
 
                 action(i, items.Count());
             }
+
+            StopRecognize = false;
 
             var buffer = "";
 
