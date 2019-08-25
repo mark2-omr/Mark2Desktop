@@ -27,15 +27,17 @@ namespace Mark2
     public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
         Survey survey;
-        // IReadOnlyList<Windows.Storage.StorageFile> fileList;
-        // String folderToken;
-        String resultCSV = null;
+        string resultCSV = null;
 
         public MainPage()
         {
             InitializeComponent();
             survey = new Survey();
-            buttonSave.IsEnabled = false;
+            saveButton.IsEnabled = false;
+
+            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 320);
+            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
+                Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -114,7 +116,7 @@ namespace Mark2
                         {
                             if (resultCSV != null)
                             {
-                                buttonSave.IsEnabled = true;
+                                saveButton.IsEnabled = true;
                             }
                             await appWindow.CloseAsync();
                         });
@@ -126,7 +128,7 @@ namespace Mark2
             }
         }
 
-        private async void ButtonSave_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new Windows.Storage.Pickers.FileSavePicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;

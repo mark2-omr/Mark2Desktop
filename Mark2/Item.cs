@@ -64,8 +64,6 @@ namespace Mark2
                     square = new Square(topLeft[0] + sq.X, topLeft[1] + sq.Y, sq.Width, sq.Height);
                 }
             }
-            // Cv2.ImShow("debug", img);
-            // Cv2.WaitKey();
 
             return square;
         }
