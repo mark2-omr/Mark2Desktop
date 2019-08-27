@@ -15,15 +15,14 @@ namespace Mark2
         public int cx;
         public int cy;
 
-        public Square(int x, int y, int w, int h)
+        public Square(int x, int y, int w, int h, int cx, int cy)
         {
             this.x = x;
             this.y = y;
             this.w = w;
             this.h = h;
-
-            this.cx = x + (w / 2);
-            this.cy = y + (h / 2);
+            this.cx = cx;
+            this.cy = cy;
         }
     }
 }

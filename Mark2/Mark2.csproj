@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mark2</RootNamespace>
     <AssemblyName>Mark2</AssemblyName>
-    <DefaultLanguage>ja-JP</DefaultLanguage>
+    <DefaultLanguage>ja-jp</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
@@ -164,10 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.8</Version>
-    </PackageReference>
-    <PackageReference Include="OpenCvSharp4.Windows">
-      <Version>4.1.0.20190416</Version>
+      <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp">
       <Version>1.0.0-beta0006</Version>

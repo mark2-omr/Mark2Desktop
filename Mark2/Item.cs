@@ -8,7 +8,6 @@ using Windows.AI.MachineLearning;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using OpenCvSharp;
 
 namespace Mark2
 {
@@ -45,25 +44,103 @@ namespace Mark2
 
         Square DetectSquare(int[] topLeft, int[] size)
         {
-            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
-            image.Clone(cloneImage => cloneImage.Crop(new Rectangle(topLeft[0], topLeft[1], size[0], size[1])))
-                .SaveAsPng(memoryStream);
-            var img = Cv2.ImDecode(memoryStream.ToArray(), ImreadModes.Grayscale);
-            var contours = new Mat[] { };
-            img.FindContours(out contours, new Mat(), RetrievalModes.List, ContourApproximationModes.ApproxNone);
+            int[,] pixels = new int[size[0], size[1]];
 
-            Square square = null;
-            foreach (Mat contour in contours)
+            var index = 1;
+            for (var i = 0; i < size[0]; i++)
             {
-                var sq = Cv2.BoundingRect(contour);
-                if (size[0] * size[1] * 0.02 < sq.Width * sq.Height
-                    && size[0] * size[1] * 0.1 > sq.Width * sq.Height
-                    && sq.Width / (double)(sq.Width + sq.Height) > 0.3
-                    && sq.Width / (double)(sq.Width + sq.Height) < 0.7)
+                for (var j = 0; j < size[1]; j++)
                 {
-                    square = new Square(topLeft[0] + sq.X, topLeft[1] + sq.Y, sq.Width, sq.Height);
+                    if (image[i + topLeft[0], j + topLeft[1]].R < 128)
+                    {
+                        pixels[i, j] = index;
+                        index++;
+                    }
+                    else
+                    {
+                        pixels[i, j] = 0;
+                    }
                 }
             }
+
+            var previousPattern = pixels.ToString();
+            while (true)
+            {
+                for(var i = 1; i < size[0] - 1; i++)
+                {
+                    for (var j = 1; j < size[1] - 1; j++)
+                    {
+                        for(var dx = -1; dx < 2; dx++)
+                        {
+                            for (var dy = -1; dy < 2; dy++)
+                            {
+                                if(dx == 0 && dy == 0)
+                                {
+                                    continue;
+                                }
+                                else if (pixels[i, j] == 0 || pixels[i + dx, j + dy] == 0)
+                                {
+                                    continue;
+                                }
+                                else if (pixels[i, j] < pixels[i + dx, j + dy])
+                                {
+                                    pixels[i + dx, j + dy] = pixels[i, j];
+                                }
+                                else if (pixels[i, j] > pixels[i + dx, j + dy])
+                                {
+                                    pixels[i, j] = pixels[i + dx, j + dy];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (previousPattern == pixels.ToString())
+                {
+                    break;
+                }
+                else
+                {
+                    previousPattern = pixels.ToString();
+                }
+            }
+
+            var frequency = new Dictionary<int, int>();
+            for (var i = 0; i < size[0]; i++)
+            {
+                for (var j = 0; j < size[1]; j++)
+                {
+                    var value = pixels[i, j];
+                    if (value > 0 && frequency.ContainsKey(value))
+                    {
+                        frequency[value]++;
+                    }
+                    else if (value > 0)
+                    {
+                        frequency[value] = 1;
+                    }
+                }
+            }
+            var mostFrequent = frequency.OrderByDescending(v => v.Value).First().Key;
+
+            var xs = new List<int>();
+            var ys = new List<int>();
+            for (var i = 0; i < size[0]; i++)
+            {
+                for (var j = 0; j < size[1]; j++)
+                {
+                    if(pixels[i, j] == mostFrequent)
+                    {
+                        xs.Add(i);
+                        ys.Add(j);
+                    }
+                }
+            }
+            xs.Average();
+
+            var square = new Square(topLeft[0] + xs.Min(), topLeft[1] + ys.Min(),
+                xs.Max() - xs.Min(), ys.Max() - ys.Min(),
+                topLeft[0] + (int)xs.Average(), topLeft[1] + (int)ys.Average());
 
             return square;
         }
