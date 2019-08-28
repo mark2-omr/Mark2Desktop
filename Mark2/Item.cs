@@ -136,7 +136,6 @@ namespace Mark2
                     }
                 }
             }
-            xs.Average();
 
             var square = new Square(topLeft[0] + xs.Min(), topLeft[1] + ys.Min(),
                 xs.Max() - xs.Min(), ys.Max() - ys.Min(),

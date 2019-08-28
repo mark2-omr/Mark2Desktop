@@ -59,7 +59,7 @@ namespace Mark2
             }
         }
 
-        async public void SetupPositions()
+        async public Task SetupPositions()
         {
             byte[] fileBytes = null;
             using (var stream = await csv.OpenReadAsync())

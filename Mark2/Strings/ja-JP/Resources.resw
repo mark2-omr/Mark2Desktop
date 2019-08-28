@@ -123,11 +123,20 @@
   <data name="CsvTextBlock.Text" xml:space="preserve">
     <value>座標CSV</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>エラー</value>
+  </data>
   <data name="ImageFolderButton.Content" xml:space="preserve">
     <value>参照</value>
   </data>
   <data name="ImageFolderTextBlock.Text" xml:space="preserve">
     <value>画像フォルダー</value>
+  </data>
+  <data name="OpenCsvError" xml:space="preserve">
+    <value>CSVファイルから座標情報の読み込みに失敗しました。CSVファイルの内容を確認してください。</value>
+  </data>
+  <data name="OpenFolderError" xml:space="preserve">
+    <value>画像フォルダーの読み込みに失敗しました。画像フォルダーの内容を確認してください。</value>
   </data>
   <data name="SaveButton.Content" xml:space="preserve">
     <value>保存</value>

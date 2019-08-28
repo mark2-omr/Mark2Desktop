@@ -7,14 +7,14 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="4f3863c7-ae7d-4ce2-90f6-bf087f07d38a"
-    Publisher="CN=kaoru"
+    Name="57659defrag.works.Mark2Desktop"
+    Publisher="CN=19806879-553C-41FF-83AC-EC05CC930EDE"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="4f3863c7-ae7d-4ce2-90f6-bf087f07d38a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="398c938a-0505-4100-849c-ac93c964455c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Mark2</DisplayName>
+    <DisplayName>Mark2 Desktop</DisplayName>
     <PublisherDisplayName>defrag.works</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -32,12 +32,12 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Mark2.App">
       <uap:VisualElements
-        DisplayName="Mark2"
+        DisplayName="Mark2 Desktop"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Mark2"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     </Application>

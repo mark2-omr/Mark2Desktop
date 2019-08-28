@@ -33,6 +33,7 @@ namespace Mark2
         {
             InitializeComponent();
             survey = new Survey();
+            startButton.IsEnabled = false;
             saveButton.IsEnabled = false;
 
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 320);
@@ -42,32 +43,67 @@ namespace Mark2
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FolderPicker();
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            picker.FileTypeFilter.Add("*");
-            var folder = await picker.PickSingleFolderAsync();
-            if (folder != null)
+            try
             {
-                survey.folder = folder;
-                survey.SetupItems();
+                var picker = new Windows.Storage.Pickers.FolderPicker();
+                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                picker.FileTypeFilter.Add("*");
+                var folder = await picker.PickSingleFolderAsync();
+                if (folder != null)
+                {
+                    survey.folder = folder;
+                    survey.SetupItems();
+                    folderPathTextBlock.Text = folder.Path;
+                }
+            }
+            catch
+            {
+                var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = resourceLoader.GetString("Error"),
+                    Content = resourceLoader.GetString("OpenFolderError"),
+                    CloseButtonText = "OK"
+                };
+                await errorDialog.ShowAsync();
+            }
 
-                // folderToken = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(folder);
-                folderPathTextBlock.Text = folder.Path;
+            if (survey.folder != null && survey.csv != null)
+            {
+                startButton.IsEnabled = true;
             }
         }
 
         private async void OpenCsvButton_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            picker.FileTypeFilter.Add(".csv");
-            var csv = await picker.PickSingleFileAsync();
-            if (csv != null)
+            try
             {
-                survey.csv = csv;
-                survey.SetupPositions();
+                var picker = new Windows.Storage.Pickers.FileOpenPicker();
+                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                picker.FileTypeFilter.Add(".csv");
+                var csv = await picker.PickSingleFileAsync();
+                if (csv != null)
+                {
+                    survey.csv = csv;
+                    await survey.SetupPositions();
+                    csvPathTextBlock.Text = csv.Path;
+                }
+            }
+            catch
+            {
+                var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = resourceLoader.GetString("Error"),
+                    Content = resourceLoader.GetString("OpenCsvError"),
+                    CloseButtonText = "OK"
+                };
+                await errorDialog.ShowAsync();
+            }
 
-                csvPathTextBlock.Text = csv.Path;
+            if (survey.folder != null && survey.csv != null)
+            {
+                startButton.IsEnabled = true;
             }
         }
 
@@ -121,7 +157,6 @@ namespace Mark2
                             await appWindow.CloseAsync();
                         });
                     });
-
                 });
 
                 taskMain.Start();
