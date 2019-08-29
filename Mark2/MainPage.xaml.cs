@@ -43,6 +43,9 @@ namespace Mark2
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
         {
+            survey.folder = null;
+            folderPathTextBlock.Text = "";
+
             try
             {
                 var picker = new Windows.Storage.Pickers.FolderPicker();
@@ -52,7 +55,7 @@ namespace Mark2
                 if (folder != null)
                 {
                     survey.folder = folder;
-                    survey.SetupItems();
+                    await survey.SetupItems();
                     folderPathTextBlock.Text = folder.Path;
                 }
             }
@@ -72,10 +75,17 @@ namespace Mark2
             {
                 startButton.IsEnabled = true;
             }
+            else
+            {
+                startButton.IsEnabled = false;
+            }
         }
 
         private async void OpenCsvButton_Click(object sender, RoutedEventArgs e)
         {
+            survey.csv = null;
+            csvPathTextBlock.Text = "";
+
             try
             {
                 var picker = new Windows.Storage.Pickers.FileOpenPicker();
@@ -104,6 +114,10 @@ namespace Mark2
             if (survey.folder != null && survey.csv != null)
             {
                 startButton.IsEnabled = true;
+            }
+            else
+            {
+                startButton.IsEnabled = false;
             }
         }
 

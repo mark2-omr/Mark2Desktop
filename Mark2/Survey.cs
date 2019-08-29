@@ -31,9 +31,9 @@ namespace Mark2
             StopRecognize = false;
         }
 
-        async public void SetupItems()
+        async public Task SetupItems()
         {
-            IReadOnlyList<Windows.Storage.StorageFile> files = await folder.GetFilesAsync();
+            var files = await folder.GetFilesAsync();
 
             LearningModel mnistModel;
             var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
@@ -52,8 +52,7 @@ namespace Mark2
                     }
                 }
 
-                SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
-                    = SixLabors.ImageSharp.Image.Load(fileBytes);
+                var image = SixLabors.ImageSharp.Image.Load(fileBytes);
                 Item item = new Item(image, mnistModel);
                 items.Add(item);
             }
