@@ -11,7 +11,7 @@ using SixLabors.Primitives;
 
 namespace Mark2
 {
-    class Item
+    public class Item
     {
         public Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
         public LearningModel mnistModel;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mark2
 {
-    class Page
+    public class Page
     {
         public List<Question> questions;
 

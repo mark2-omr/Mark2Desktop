@@ -19,7 +19,7 @@ namespace Mark2
         public Windows.Storage.StorageFolder folder;
         public Windows.Storage.StorageFile csv;
         public double threshold;
-        List<Item> items;
+        public List<Item> items;
         List<Page> pages;
         public string resultBuffer;
         public bool StopRecognize { get; set; }
@@ -41,6 +41,10 @@ namespace Mark2
 
             foreach (var file in files)
             {
+                if (!file.Name.Contains(".png"))
+                {
+                    continue;
+                }
                 byte[] fileBytes = null;
                 using (var stream = await file.OpenReadAsync())
                 {

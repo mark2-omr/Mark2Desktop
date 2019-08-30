@@ -126,6 +126,9 @@
   <data name="Error" xml:space="preserve">
     <value>エラー</value>
   </data>
+  <data name="FolderNoImageError" xml:space="preserve">
+    <value>画像フォルダーに画像がありません。</value>
+  </data>
   <data name="ImageFolderButton.Content" xml:space="preserve">
     <value>参照</value>
   </data>

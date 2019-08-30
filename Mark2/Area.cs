@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mark2
 {
-    class Area
+    public class Area
     {
         public int x;
         public int y;

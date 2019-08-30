@@ -71,6 +71,21 @@ namespace Mark2
                 await errorDialog.ShowAsync();
             }
 
+            if (survey.items.Count == 0)
+            {
+                var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = resourceLoader.GetString("Error"),
+                    Content = resourceLoader.GetString("FolderNoImageError"),
+                    CloseButtonText = "OK"
+                };
+                await errorDialog.ShowAsync();
+
+                survey.folder = null;
+                folderPathTextBlock.Text = "";
+            }
+
             if (survey.folder != null && survey.csv != null)
             {
                 startButton.IsEnabled = true;
