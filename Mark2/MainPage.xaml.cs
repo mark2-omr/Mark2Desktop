@@ -54,18 +54,19 @@ namespace Mark2
                 var folder = await picker.PickSingleFolderAsync();
                 if (folder != null)
                 {
+                    folderPathTextBlock.Text = folder.Path;
                     survey.folder = folder;
                     await survey.SetupItems();
-                    folderPathTextBlock.Text = folder.Path;
                 }
             }
-            catch
+            catch (Exception exception)
             {
+                folderPathTextBlock.Text = "";
                 var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
                 ContentDialog errorDialog = new ContentDialog
                 {
                     Title = resourceLoader.GetString("Error"),
-                    Content = resourceLoader.GetString("OpenFolderError"),
+                    Content = resourceLoader.GetString("OpenFolderError") + "\n" + exception.ToString(),
                     CloseButtonText = "OK"
                 };
                 await errorDialog.ShowAsync();

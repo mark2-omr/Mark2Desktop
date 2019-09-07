@@ -24,7 +24,6 @@ namespace Mark2
         public string resultBuffer;
         public bool StopRecognize { get; set; }
 
-        // public Survey(Windows.Storage.StorageFolder folder, Windows.Storage.StorageFile csv)
         public Survey(){
             items = new List<Item>();
             pages = new List<Page>();
@@ -41,24 +40,26 @@ namespace Mark2
 
             foreach (var file in files)
             {
-                if (!file.Name.Contains(".png"))
+                try
                 {
-                    continue;
-                }
-                byte[] fileBytes = null;
-                using (var stream = await file.OpenReadAsync())
-                {
-                    fileBytes = new byte[stream.Size];
-                    using (var reader = new Windows.Storage.Streams.DataReader(stream))
+                    byte[] fileBytes = null;
+                    using (var stream = await file.OpenReadAsync())
                     {
-                        await reader.LoadAsync((uint)stream.Size);
-                        reader.ReadBytes(fileBytes);
+                        fileBytes = new byte[stream.Size];
+                        using (var reader = new Windows.Storage.Streams.DataReader(stream))
+                        {
+                            await reader.LoadAsync((uint)stream.Size);
+                            reader.ReadBytes(fileBytes);
+                        }
                     }
-                }
 
-                var image = SixLabors.ImageSharp.Image.Load(fileBytes);
-                Item item = new Item(image, mnistModel);
-                items.Add(item);
+                    var image = SixLabors.ImageSharp.Image.Load(fileBytes);
+                    Item item = new Item(image, mnistModel);
+                    items.Add(item);
+                } catch
+                {
+
+                }
             }
         }
 
