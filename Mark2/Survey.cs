@@ -36,7 +36,7 @@ namespace Mark2
             var files = await folder.GetFilesAsync();
 
             LearningModel mnistModel;
-            var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
+            var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_7.onnx"));
             mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
 
             foreach (var file in files)
