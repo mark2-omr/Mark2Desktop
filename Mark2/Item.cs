@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Windows.Storage;
 using Windows.AI.MachineLearning;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
@@ -13,15 +15,18 @@ namespace Mark2
 {
     public class Item
     {
+        public string name;
         public Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
         public LearningModel mnistModel;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
+        public Windows.Storage.StorageFolder logFolder;
 
-        public Item(Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image,
+        public Item(string name, Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image,
             LearningModel mnistModel)
         {
+            this.name = name;
             this.image = image;
             this.mnistModel = mnistModel;
             answers = new List<List<int>>();
@@ -141,6 +146,23 @@ namespace Mark2
                 xs.Max() - xs.Min(), ys.Max() - ys.Min(),
                 topLeft[0] + (int)xs.Average(), topLeft[1] + (int)ys.Average());
 
+            for(int i = topLeft[0] + xs.Min(); i < xs.Max() - xs.Min(); i++)
+            {
+                for(int j = topLeft[1] + ys.Min(); j < ys.Max() - ys.Min(); j++)
+                {
+                    image[i, j] = SixLabors.ImageSharp.PixelFormats.Rgba32.Red;
+                }
+            }
+
+            // 左上に赤色の四角形を描画しようとしたテストコード（赤色が黒色になってしまう）
+            for (int i = 0; i < 100; i++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    image[i, j] = SixLabors.ImageSharp.PixelFormats.Rgba32.Red;
+                }
+            }
+
             return square;
         }
 
@@ -219,6 +241,10 @@ namespace Mark2
                 }
                 answers.Add(_answers);
             }
+
+            StorageFile logFile = await logFolder.CreateFileAsync(name, Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            var stream = await logFile.OpenStreamForWriteAsync();
+            image.SaveAsPng(stream);
         }
 
         public int[] BiLenearInterpoltation(int xp, int yp)

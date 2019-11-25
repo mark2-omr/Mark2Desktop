@@ -17,6 +17,7 @@ namespace Mark2
     public class Survey
     {
         public Windows.Storage.StorageFolder folder;
+        public Windows.Storage.StorageFolder logFolder;
         public Windows.Storage.StorageFile csv;
         public double threshold;
         public List<Item> items;
@@ -54,9 +55,10 @@ namespace Mark2
                     }
 
                     var image = SixLabors.ImageSharp.Image.Load(fileBytes);
-                    Item item = new Item(image, mnistModel);
+                    Item item = new Item(file.Name, image, mnistModel);
                     items.Add(item);
-                } catch
+                }
+                catch
                 {
 
                 }
@@ -117,8 +119,18 @@ namespace Mark2
                         question.areas.Add(area);
                     }
                 }
-
                 pages[pageNumber - 1].questions.Add(question);
+            }
+        }
+
+        public async Task SetupLogFolder()
+        {
+            DateTime dateTime = DateTime.Now;
+            logFolder = await folder.CreateFolderAsync($"log{dateTime.ToString("yyyyMMdd_HHmmss")}",
+                Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            for(int i = 0; i < items.Count; i++)
+            {
+                items[i].logFolder = logFolder;
             }
         }
 

@@ -153,9 +153,10 @@ namespace Mark2
 
             if (survey.folder != null && survey.csv != null)
             {
-                appWindow.RequestSize(new Size(800, 300));
-                await appWindow.TryShowAsync();
+                await survey.SetupLogFolder();
 
+                appWindow.RequestSize(new Size(400, 200));
+                await appWindow.TryShowAsync();
                 System.Diagnostics.Debug.WriteLine("Recognize");
 
                 Task taskMain = new Task(async () =>
