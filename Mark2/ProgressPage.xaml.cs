@@ -29,7 +29,6 @@ namespace Mark2
 
         public void setProgress(double value)
         {
-
             this.progressBar.Value = value;
         }
 

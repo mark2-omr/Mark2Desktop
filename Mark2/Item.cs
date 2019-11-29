@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 using Windows.Storage;
 using Windows.AI.MachineLearning;
+
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 
@@ -16,18 +19,20 @@ namespace Mark2
     public class Item
     {
         public string name;
-        public Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
+        public Image<Rgba32> image;
+        public Image<Rgba32> logImage;
         public LearningModel mnistModel;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
-        public Windows.Storage.StorageFolder logFolder;
+        public StorageFolder logFolder;
 
-        public Item(string name, Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image,
+        public Item(string name, Image<Rgba32> image,
             LearningModel mnistModel)
         {
             this.name = name;
             this.image = image;
+            this.logImage = image.Clone();
             this.mnistModel = mnistModel;
             answers = new List<List<int>>();
         }
@@ -71,15 +76,15 @@ namespace Mark2
             var previousPattern = pixels.ToString();
             while (true)
             {
-                for(var i = 1; i < size[0] - 1; i++)
+                for (var i = 1; i < size[0] - 1; i++)
                 {
                     for (var j = 1; j < size[1] - 1; j++)
                     {
-                        for(var dx = -1; dx < 2; dx++)
+                        for (var dx = -1; dx < 2; dx++)
                         {
                             for (var dy = -1; dy < 2; dy++)
                             {
-                                if(dx == 0 && dy == 0)
+                                if (dx == 0 && dy == 0)
                                 {
                                     continue;
                                 }
@@ -134,7 +139,7 @@ namespace Mark2
             {
                 for (var j = 0; j < size[1]; j++)
                 {
-                    if(pixels[i, j] == mostFrequent)
+                    if (pixels[i, j] == mostFrequent)
                     {
                         xs.Add(i);
                         ys.Add(j);
@@ -146,28 +151,14 @@ namespace Mark2
                 xs.Max() - xs.Min(), ys.Max() - ys.Min(),
                 topLeft[0] + (int)xs.Average(), topLeft[1] + (int)ys.Average());
 
-            for(int i = topLeft[0] + xs.Min(); i < xs.Max() - xs.Min(); i++)
-            {
-                for(int j = topLeft[1] + ys.Min(); j < ys.Max() - ys.Min(); j++)
-                {
-                    image[i, j] = SixLabors.ImageSharp.PixelFormats.Rgba32.Red;
-                }
-            }
-
-            // 左上に赤色の四角形を描画しようとしたテストコード（赤色が黒色になってしまう）
-            for (int i = 0; i < 100; i++)
-            {
-                for (int j = 0; j < 100; j++)
-                {
-                    image[i, j] = SixLabors.ImageSharp.PixelFormats.Rgba32.Red;
-                }
-            }
+            fillRect(square.x, square.y, square.w, square.h, Rgba32.Red, 0.8f);
 
             return square;
         }
 
         public async Task Recognize(double threshold)
         {
+            logImage = image.Clone();
             var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
             foreach (var question in page.questions)
             {
@@ -193,7 +184,12 @@ namespace Mark2
                         if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > threshold)
                         {
                             _answers.Add(area.v);
+                            fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Green, 0.4f);
+                        } else
+                        {
+                            fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Red, 0.4f);
                         }
+                        
                     }
                 }
                 else if (question.type == 2)
@@ -204,7 +200,7 @@ namespace Mark2
                     {
                         var topLeft = BiLenearInterpoltation(area.x, area.y);
                         var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
- 
+
                         var cloneImage = image.Clone(img => img
                             .Crop(new Rectangle(topLeft[0], topLeft[1],
                                 bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
@@ -236,15 +232,20 @@ namespace Mark2
                             TensorFloat outTensor = (TensorFloat)item.Value;
                             v = outTensor.GetAsVectorView().ToList();
                         }
+
                         _answers.Add(v.IndexOf(v.Max()));
+                        fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Blue, 0.4f);
                     }
                 }
                 answers.Add(_answers);
             }
 
-            StorageFile logFile = await logFolder.CreateFileAsync(name, Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            StorageFile logFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
             var stream = await logFile.OpenStreamForWriteAsync();
-            image.SaveAsPng(stream);
+            var encoder = new PngEncoder();
+            encoder.ColorType = PngColorType.Rgb;
+            encoder.BitDepth = PngBitDepth.Bit8;
+            logImage.SaveAsPng(stream, encoder);
         }
 
         public int[] BiLenearInterpoltation(int xp, int yp)
@@ -290,7 +291,8 @@ namespace Mark2
 
                 // 初期値で誤差が極小化される場合は傾斜が0になって補正量が発散する問題あり
                 // 発散を避けるために乱数で(u, v)を変更
-                if (Math.Abs(d) < 1.0e-6) {
+                if (Math.Abs(d) < 1.0e-6)
+                {
                     // STDERR.printf "d: %+e\n", d
                     u = new Random().NextDouble();
                     v = new Random().NextDouble();
@@ -311,7 +313,8 @@ namespace Mark2
                 er = du * du + dv * dv;
                 iteration++;
 
-                if (!(er > erMax && iteration < maxIteration)) {
+                if (!(er > erMax && iteration < maxIteration))
+                {
                     break;
                 }
             }
@@ -323,6 +326,20 @@ namespace Mark2
                 + (squares[0].cy - squares[1].cy + squares[2].cy - squares[3].cy) * u * v;
 
             return new int[] { (int)xq, (int)yq };
+        }
+
+        public void fillRect(int x, int y, int w, int h, Rgba32 c, float a)
+        {
+            for (int i = x; i < w + x; i++)
+            {
+                for (int j = y; j < h + y; j++)
+                {
+                    logImage[i, j] = new Rgba32(
+                        ((float)logImage[i, j].R * (1.0f - a) + (float)c.R * a) / 255.0f,
+                        ((float)logImage[i, j].G * (1.0f - a) + (float)c.G * a) / 255.0f,
+                        ((float)logImage[i, j].B * (1.0f - a) + (float)c.B * a) / 255.0f);
+                }
+            }
         }
     }
 }

@@ -16,16 +16,17 @@ namespace Mark2
 {
     public class Survey
     {
-        public Windows.Storage.StorageFolder folder;
-        public Windows.Storage.StorageFolder logFolder;
-        public Windows.Storage.StorageFile csv;
+        public StorageFolder folder;
+        public StorageFolder logFolder;
+        public StorageFile csv;
         public double threshold;
         public List<Item> items;
         List<Page> pages;
         public string resultBuffer;
         public bool StopRecognize { get; set; }
 
-        public Survey(){
+        public Survey()
+        {
             items = new List<Item>();
             pages = new List<Page>();
             StopRecognize = false;
@@ -54,7 +55,7 @@ namespace Mark2
                         }
                     }
 
-                    var image = SixLabors.ImageSharp.Image.Load(fileBytes);
+                    var image = Image.Load(fileBytes);
                     Item item = new Item(file.Name, image, mnistModel);
                     items.Add(item);
                 }
@@ -136,12 +137,6 @@ namespace Mark2
 
         public async Task Recognize(Action<int, int> action)
         {
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    action(i, 10);
-            //    Thread.Sleep(500);
-            //}
-
             for (int i = 0; i < items.Count(); i++)
             {
                 if (StopRecognize)
