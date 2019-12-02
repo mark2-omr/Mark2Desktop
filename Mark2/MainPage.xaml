@@ -41,7 +41,7 @@
 
         <TextBlock x:Uid="ThresholdTextBlock" Grid.Row="2" Grid.Column="0"
                    Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <Slider x:Name="thresholdSlider" Value="80" Maximum="100" Minimum="60"
+        <Slider x:Name="thresholdSlider" Value="60" Maximum="95" Minimum="5"
                 Margin="10" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                 HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 

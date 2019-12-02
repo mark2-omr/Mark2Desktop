@@ -158,7 +158,7 @@ namespace Mark2
 
         public async Task Recognize(double threshold)
         {
-            logImage = image.Clone();
+            answers = new List<List<int>>();
             var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
             foreach (var question in page.questions)
             {
@@ -233,7 +233,11 @@ namespace Mark2
                             v = outTensor.GetAsVectorView().ToList();
                         }
 
-                        _answers.Add(v.IndexOf(v.Max()));
+                        if(v.Max() > 0.4)
+                        {
+                            _answers.Add(v.IndexOf(v.Max()));
+                        }
+
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Blue, 0.4f);
                     }
                 }
