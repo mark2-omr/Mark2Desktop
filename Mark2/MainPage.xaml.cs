@@ -19,6 +19,8 @@ using SixLabors.ImageSharp.Processing;
 
 using System.Threading;
 
+using Microsoft.Advertising.WinRT.UI;
+
 namespace Mark2
 {
     /// <summary>
@@ -28,6 +30,10 @@ namespace Mark2
     {
         Survey survey;
         string resultCSV = null;
+
+        InterstitialAd interstitialAd = null;
+        string appId = "9nrjc7500p6m";
+        string adUnitId = "1100063063";
 
         public MainPage()
         {
@@ -39,6 +45,13 @@ namespace Mark2
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 320);
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
                 Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+            interstitialAd = new InterstitialAd();
+            interstitialAd.AdReady += InterstitialAd_AdReady;
+            interstitialAd.ErrorOccurred += InterstitialAd_ErrorOccurred;
+            interstitialAd.Completed += InterstitialAd_Completed;
+            interstitialAd.Cancelled += InterstitialAd_Cancelled;
+            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -141,6 +154,11 @@ namespace Mark2
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            if (InterstitialAdState.Ready == interstitialAd.State)
+            {
+                interstitialAd.Show();
+            }
+
             survey.threshold = thresholdSlider.Value / 100.0;
 
             Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
@@ -157,7 +175,7 @@ namespace Mark2
             {
                 await survey.SetupLogFolder();
 
-                appWindow.RequestSize(new Size(400, 200));
+                appWindow.RequestSize(new Size(400, 100));
                 await appWindow.TryShowAsync();
                 System.Diagnostics.Debug.WriteLine("Recognize");
 
@@ -178,7 +196,7 @@ namespace Mark2
 
                     System.Diagnostics.Debug.WriteLine("finished");
                     resultCSV = survey.resultBuffer;
-                        
+
                     await Task.Run(async () =>
                     {
                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -194,6 +212,7 @@ namespace Mark2
 
                 taskMain.Start();
             }
+            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -207,6 +226,26 @@ namespace Mark2
             {
                 await Windows.Storage.FileIO.WriteTextAsync(file, this.resultCSV);
             }
+        }
+
+        void InterstitialAd_AdReady(object sender, object e)
+        {
+            // Your code goes here.
+        }
+
+        void InterstitialAd_ErrorOccurred(object sender, AdErrorEventArgs e)
+        {
+            // Your code goes here.
+        }
+
+        void InterstitialAd_Completed(object sender, object e)
+        {
+            // Your code goes here.
+        }
+
+        void InterstitialAd_Cancelled(object sender, object e)
+        {
+            // Your code goes here.
         }
     }
 }
