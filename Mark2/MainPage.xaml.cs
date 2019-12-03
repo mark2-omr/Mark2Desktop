@@ -56,7 +56,7 @@ namespace Mark2
                 {
                     folderPathTextBlock.Text = folder.Path;
                     survey.folder = folder;
-                    await survey.SetupItems();
+                    // await survey.SetupItems();
                 }
             }
             catch (Exception exception)
@@ -72,6 +72,7 @@ namespace Mark2
                 await errorDialog.ShowAsync();
             }
 
+            /*
             if (survey.items.Count == 0)
             {
                 var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
@@ -86,6 +87,7 @@ namespace Mark2
                 survey.folder = null;
                 folderPathTextBlock.Text = "";
             }
+            */
 
             if (survey.folder != null && survey.csv != null)
             {
@@ -163,7 +165,7 @@ namespace Mark2
                 {
                     System.Diagnostics.Debug.WriteLine("Recognizing");
 
-                    await survey.Recognize(async(i, max) =>
+                    await survey.Recognize(async (i, max) =>
                     {
                         await Task.Run(async () =>
                         {
@@ -176,7 +178,7 @@ namespace Mark2
 
                     System.Diagnostics.Debug.WriteLine("finished");
                     resultCSV = survey.resultBuffer;
-
+                        
                     await Task.Run(async () =>
                     {
                         await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>

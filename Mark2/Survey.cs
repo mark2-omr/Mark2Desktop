@@ -32,40 +32,6 @@ namespace Mark2
             StopRecognize = false;
         }
 
-        async public Task SetupItems()
-        {
-            var files = await folder.GetFilesAsync();
-
-            LearningModel mnistModel;
-            var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_7.onnx"));
-            mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
-
-            foreach (var file in files)
-            {
-                try
-                {
-                    byte[] fileBytes = null;
-                    using (var stream = await file.OpenReadAsync())
-                    {
-                        fileBytes = new byte[stream.Size];
-                        using (var reader = new Windows.Storage.Streams.DataReader(stream))
-                        {
-                            await reader.LoadAsync((uint)stream.Size);
-                            reader.ReadBytes(fileBytes);
-                        }
-                    }
-
-                    var image = Image.Load(fileBytes);
-                    Item item = new Item(file.Name, image, mnistModel);
-                    items.Add(item);
-                }
-                catch
-                {
-
-                }
-            }
-        }
-
         async public Task SetupPositions()
         {
             byte[] fileBytes = null;
@@ -129,62 +95,83 @@ namespace Mark2
             DateTime dateTime = DateTime.Now;
             logFolder = await folder.CreateFolderAsync($"log{dateTime.ToString("yyyyMMdd_HHmmss")}",
                 Windows.Storage.CreationCollisionOption.ReplaceExisting);
-            for(int i = 0; i < items.Count; i++)
-            {
-                items[i].logFolder = logFolder;
-            }
         }
 
         public async Task Recognize(Action<int, int> action)
         {
-            for (int i = 0; i < items.Count(); i++)
-            {
-                if (StopRecognize)
-                {
-                    break;
-                }
-                items[i].page = pages[i % pages.Count()];
-                items[i].DetectSquares();
-                await items[i].Recognize(threshold);
-
-                action(i, items.Count());
-            }
-
-            StopRecognize = false;
+            var files = await folder.GetFilesAsync();
+            LearningModel mnistModel;
+            var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
+            mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
 
             var buffer = "";
-
             var numQuestions = 0;
             foreach (var page in pages)
             {
                 numQuestions += page.questions.Count();
             }
-            for(var i = 0; i < numQuestions; i++)
+            for (var qid = 0; qid < numQuestions; qid++)
             {
-                buffer += "," + (i + 1).ToString();
+                buffer += "," + (qid + 1).ToString();
             }
             buffer += "\n";
 
-            var label = 1;
-            for (int i = 0; i < items.Count(); i++)
+            var i = 0;
+            var pid = 1;
+            foreach (var file in files)
             {
-                if ((i + 1) % pages.Count() == 1)
+                if (StopRecognize)
                 {
-                    buffer += label.ToString() + ",";
-                }
-                foreach (var _answers in items[i].answers)
-                {
-                    buffer += String.Join(";", _answers);
-                    buffer += ",";
+                    break;
                 }
 
-                if ((i + 1) % pages.Count() == 0)
+                try
                 {
-                    buffer += "\n";
-                    label++;
+                    byte[] fileBytes = null;
+                    using (var stream = await file.OpenReadAsync())
+                    {
+                        fileBytes = new byte[stream.Size];
+                        using (var reader = new Windows.Storage.Streams.DataReader(stream))
+                        {
+                            await reader.LoadAsync((uint)stream.Size);
+                            reader.ReadBytes(fileBytes);
+                        }
+                    }
+
+                    var image = Image.Load(fileBytes);
+                    Item item = new Item(file.Name, image, logFolder, mnistModel);
+
+                    item.page = pages[i % pages.Count()];
+                    item.DetectSquares();
+                    await item.Recognize(threshold);
+
+                    if ((i + 1) % pages.Count() == 1)
+                    {
+                        buffer += pid.ToString() + ",";
+                    }
+                    foreach (var _answers in item.answers)
+                    {
+                        buffer += String.Join(";", _answers);
+                        buffer += ",";
+                    }
+
+                    if ((i + 1) % pages.Count() == 0)
+                    {
+                        buffer += "\n";
+                        pid++;
+                    }
+
+                    action(i, files.Count());
+                    i++;
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e);
                 }
             }
-            // return buffer;
+
+            StopRecognize = false;
+
             resultBuffer = buffer;
         }
     }

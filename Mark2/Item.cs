@@ -21,18 +21,18 @@ namespace Mark2
         public string name;
         public Image<Rgba32> image;
         public Image<Rgba32> logImage;
+        public StorageFolder logFolder;
         public LearningModel mnistModel;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
-        public StorageFolder logFolder;
 
-        public Item(string name, Image<Rgba32> image,
-            LearningModel mnistModel)
+        public Item(string name, Image<Rgba32> image, StorageFolder logFolder, LearningModel mnistModel)
         {
             this.name = name;
             this.image = image;
             this.logImage = image.Clone();
+            this.logFolder = logFolder;
             this.mnistModel = mnistModel;
             answers = new List<List<int>>();
         }
@@ -243,7 +243,7 @@ namespace Mark2
                 }
                 answers.Add(_answers);
             }
-
+            
             StorageFile logFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
             var stream = await logFile.OpenStreamForWriteAsync();
             var encoder = new PngEncoder();
