@@ -183,15 +183,16 @@ namespace Mark2
                 {
                     System.Diagnostics.Debug.WriteLine("Recognizing");
 
-                    await survey.Recognize(async (i, max) =>
+                    await survey.Recognize( (i, max) =>
                     {
-                        await Task.Run(async () =>
+                        Task t = Task.Run(async () =>
                         {
                             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
                                 progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
                             });
                         });
+                        t.Wait();
                     });
 
                     System.Diagnostics.Debug.WriteLine("finished");
