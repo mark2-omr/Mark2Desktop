@@ -181,36 +181,38 @@ namespace Mark2
             await appWindow.TryShowAsync();
             System.Diagnostics.Debug.WriteLine("Recognize");
 
+            // 非同期で実行する
             Task taskMain = new Task(async () =>
             {
                 System.Diagnostics.Debug.WriteLine("Recognizing");
 
-                await survey.Recognize( (i, max) =>
+                await survey.Recognize( async (i, max) =>
                 {
-                    Task t = Task.Run(async () =>
+                
+                
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                        {
-                            progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
-                        });
+                        progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
                     });
-                    t.Wait();
+                
+                
+
                 });
+
 
                 System.Diagnostics.Debug.WriteLine("finished");
                 resultCSV = survey.resultBuffer;
 
-                await Task.Run(async () =>
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    if (resultCSV != null)
                     {
-                        if (resultCSV != null)
-                        {
-                            saveButton.IsEnabled = true;
-                        }
-                        await appWindow.CloseAsync();
-                    });
+                        saveButton.IsEnabled = true;
+                    }
+                    await appWindow.CloseAsync();
                 });
+                
+
             });
 
             taskMain.Start();
