@@ -171,47 +171,45 @@ namespace Mark2
             progressPage.appWindow = appWindow;
             progressPage.survey = survey;
 
-            if (survey.folder != null && survey.csv != null)
+            if (survey.folder == null || survey.csv == null)
             {
-                await survey.SetupLogFolder();
+                return;
+            }
 
-                appWindow.RequestSize(new Size(400, 100));
-                await appWindow.TryShowAsync();
-                System.Diagnostics.Debug.WriteLine("Recognize");
+            await survey.SetupLogFolder();
 
-                Task taskMain = new Task(async () =>
+            appWindow.RequestSize(new Size(400, 100));
+            await appWindow.TryShowAsync();
+
+            Task taskMain = new Task(async () =>
+            {
+                System.Diagnostics.Debug.WriteLine("Recognizing");
+
+                await survey.Recognize(async (i, max) =>
                 {
-                    System.Diagnostics.Debug.WriteLine("Recognizing");
-
-                    await survey.Recognize(async (i, max) =>
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        await Task.Run(async () =>
-                        {
-                            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
-                            });
-                        });
-                    });
-
-                    System.Diagnostics.Debug.WriteLine("finished");
-                    resultCSV = survey.resultBuffer;
-
-                    await Task.Run(async () =>
-                    {
-                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                        {
-                            if (resultCSV != null)
-                            {
-                                saveButton.IsEnabled = true;
-                            }
-                            await appWindow.CloseAsync();
-                        });
-                    });
+                        progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
+                    });  
                 });
 
-                taskMain.Start();
-            }
+                System.Diagnostics.Debug.WriteLine("Finished");
+
+                resultCSV = survey.resultBuffer;
+
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                {
+                    if (resultCSV != null)
+                    {
+                        saveButton.IsEnabled = true;
+                    }
+                    await appWindow.CloseAsync();
+                });
+             
+            });
+
+            taskMain.Start();
+            
             interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
