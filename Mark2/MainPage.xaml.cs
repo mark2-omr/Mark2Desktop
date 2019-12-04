@@ -171,48 +171,50 @@ namespace Mark2
             progressPage.appWindow = appWindow;
             progressPage.survey = survey;
 
-            if (survey.folder != null && survey.csv != null)
+            if (survey.folder == null || survey.csv == null)
             {
-                await survey.SetupLogFolder();
+                return;
+            }
+            await survey.SetupLogFolder();
 
-                appWindow.RequestSize(new Size(400, 100));
-                await appWindow.TryShowAsync();
-                System.Diagnostics.Debug.WriteLine("Recognize");
+            appWindow.RequestSize(new Size(400, 100));
+            await appWindow.TryShowAsync();
+            System.Diagnostics.Debug.WriteLine("Recognize");
 
-                Task taskMain = new Task(async () =>
+            Task taskMain = new Task(async () =>
+            {
+                System.Diagnostics.Debug.WriteLine("Recognizing");
+
+                await survey.Recognize( (i, max) =>
                 {
-                    System.Diagnostics.Debug.WriteLine("Recognizing");
-
-                    await survey.Recognize( (i, max) =>
+                    Task t = Task.Run(async () =>
                     {
-                        Task t = Task.Run(async () =>
+                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                         {
-                            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
-                            });
-                        });
-                        t.Wait();
-                    });
-
-                    System.Diagnostics.Debug.WriteLine("finished");
-                    resultCSV = survey.resultBuffer;
-
-                    await Task.Run(async () =>
-                    {
-                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                        {
-                            if (resultCSV != null)
-                            {
-                                saveButton.IsEnabled = true;
-                            }
-                            await appWindow.CloseAsync();
+                            progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
                         });
                     });
+                    t.Wait();
                 });
 
-                taskMain.Start();
-            }
+                System.Diagnostics.Debug.WriteLine("finished");
+                resultCSV = survey.resultBuffer;
+
+                await Task.Run(async () =>
+                {
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                    {
+                        if (resultCSV != null)
+                        {
+                            saveButton.IsEnabled = true;
+                        }
+                        await appWindow.CloseAsync();
+                    });
+                });
+            });
+
+            taskMain.Start();
+            
             interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
