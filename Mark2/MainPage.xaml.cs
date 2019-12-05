@@ -12,12 +12,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Threading;
 using System.Threading.Tasks;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-
-using System.Threading;
 
 using Microsoft.Advertising.WinRT.UI;
 
@@ -34,6 +33,7 @@ namespace Mark2
         InterstitialAd interstitialAd = null;
         string appId = "9nrjc7500p6m";
         string adUnitId = "1100063063";
+        // string adUnitId = "test";
 
         public MainPage()
         {
