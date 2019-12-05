@@ -243,13 +243,16 @@ namespace Mark2
                 }
                 answers.Add(_answers);
             }
-            
-            StorageFile logFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
-            var stream = await logFile.OpenStreamForWriteAsync();
-            var encoder = new PngEncoder();
-            encoder.ColorType = PngColorType.Rgb;
-            encoder.BitDepth = PngBitDepth.Bit8;
-            logImage.SaveAsPng(stream, encoder);
+
+
+            _ = Task.Run(async () => {
+                StorageFile logFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+                var stream = await logFile.OpenStreamForWriteAsync();
+                var encoder = new PngEncoder();
+                encoder.ColorType = PngColorType.Rgb;
+                encoder.BitDepth = PngBitDepth.Bit8;
+                logImage.SaveAsPng(stream, encoder);
+            });
         }
 
         public int[] BiLenearInterpoltation(int xp, int yp)
