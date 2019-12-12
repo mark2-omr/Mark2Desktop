@@ -15,9 +15,6 @@ using Windows.UI.Xaml.Navigation;
 using System.Threading;
 using System.Threading.Tasks;
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-
 using Microsoft.Advertising.WinRT.UI;
 
 namespace Mark2
@@ -33,7 +30,6 @@ namespace Mark2
         InterstitialAd interstitialAd = null;
         string appId = "9nrjc7500p6m";
         string adUnitId = "1100063063";
-        // string adUnitId = "test";
 
         public MainPage()
         {
@@ -45,6 +41,7 @@ namespace Mark2
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 320);
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
                 Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 320));
 
             interstitialAd = new InterstitialAd();
             interstitialAd.AdReady += InterstitialAd_AdReady;
@@ -69,7 +66,6 @@ namespace Mark2
                 {
                     folderPathTextBlock.Text = folder.Path;
                     survey.folder = folder;
-                    // await survey.SetupItems();
                 }
             }
             catch (Exception exception)
@@ -158,6 +154,10 @@ namespace Mark2
             {
                 interstitialAd.Show();
             }
+            else
+            {
+                interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
+            }
 
             survey.threshold = thresholdSlider.Value / 100.0;
 
@@ -176,7 +176,7 @@ namespace Mark2
                 return;
             }
 
-            await survey.SetupLogFolder();
+            await survey.SetupOutputFolders();
 
             appWindow.RequestSize(new Size(400, 100));
             await appWindow.TryShowAsync();
@@ -205,12 +205,8 @@ namespace Mark2
                     }
                     await appWindow.CloseAsync();
                 });
-             
             });
-
             taskMain.Start();
-            
-            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -233,17 +229,19 @@ namespace Mark2
 
         void InterstitialAd_ErrorOccurred(object sender, AdErrorEventArgs e)
         {
-            // Your code goes here.
+            System.Diagnostics.Debug.WriteLine(e);
         }
 
         void InterstitialAd_Completed(object sender, object e)
         {
-            // Your code goes here.
+            System.Diagnostics.Debug.WriteLine("Request Ad Complete");
+            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
         void InterstitialAd_Cancelled(object sender, object e)
         {
-            // Your code goes here.
+            System.Diagnostics.Debug.WriteLine("Request Ad Cancelled");
+            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
     }
 }

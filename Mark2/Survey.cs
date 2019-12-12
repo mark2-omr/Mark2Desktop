@@ -17,6 +17,7 @@ namespace Mark2
     public class Survey
     {
         public StorageFolder folder;
+        public StorageFolder textFolder;
         public StorageFolder logFolder;
         public StorageFile csv;
         public double threshold;
@@ -90,10 +91,12 @@ namespace Mark2
             }
         }
 
-        public async Task SetupLogFolder()
+        public async Task SetupOutputFolders()
         {
             DateTime dateTime = DateTime.Now;
-            logFolder = await folder.CreateFolderAsync($"log{dateTime.ToString("yyyyMMdd_HHmmss")}",
+            textFolder = await folder.CreateFolderAsync($"text_{dateTime.ToString("yyyyMMdd_HHmmss")}",
+                Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            logFolder = await folder.CreateFolderAsync($"log_{dateTime.ToString("yyyyMMdd_HHmmss")}",
                 Windows.Storage.CreationCollisionOption.ReplaceExisting);
         }
 
@@ -139,7 +142,7 @@ namespace Mark2
                     }
 
                     var image = Image.Load(fileBytes);
-                    Item item = new Item(file.Name, image, logFolder, mnistModel);
+                    Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel);
 
                     item.page = pages[i % pages.Count()];
                     item.DetectSquares();
@@ -171,7 +174,6 @@ namespace Mark2
             }
 
             StopRecognize = false;
-
             resultBuffer = buffer;
         }
     }

@@ -18,20 +18,24 @@ namespace Mark2
 {
     public class Item
     {
+        public int pid;
         public string name;
         public Image<Rgba32> image;
         public Image<Rgba32> logImage;
+        public StorageFolder textFolder;
         public StorageFolder logFolder;
         public LearningModel mnistModel;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
 
-        public Item(string name, Image<Rgba32> image, StorageFolder logFolder, LearningModel mnistModel)
+        public Item(int pid, string name, Image<Rgba32> image, StorageFolder textFolder, StorageFolder logFolder, LearningModel mnistModel)
         {
+            this.pid = pid;
             this.name = name;
             this.image = image;
             this.logImage = image.Clone();
+            this.textFolder = textFolder;
             this.logFolder = logFolder;
             this.mnistModel = mnistModel;
             answers = new List<List<int>>();
@@ -160,7 +164,7 @@ namespace Mark2
         {
             answers = new List<List<int>>();
             var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
-            foreach (var question in page.questions)
+            foreach (var (question, qid) in page.questions.Select((question, qid) => (question, qid)))
             {
                 var _answers = new List<int>();
                 if (question.type == 1)
@@ -185,11 +189,12 @@ namespace Mark2
                         {
                             _answers.Add(area.v);
                             fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Green, 0.4f);
-                        } else
+                        }
+                        else
                         {
                             fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Red, 0.4f);
                         }
-                        
+
                     }
                 }
                 else if (question.type == 2)
@@ -233,7 +238,7 @@ namespace Mark2
                             v = outTensor.GetAsVectorView().ToList();
                         }
 
-                        if(v.Max() > 0.4)
+                        if (v.Max() > 0.4)
                         {
                             _answers.Add(v.IndexOf(v.Max()));
                         }
@@ -241,9 +246,27 @@ namespace Mark2
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Blue, 0.4f);
                     }
                 }
+                else if (question.type == 3)
+                {
+                    var name = String.Format("{0:0000}_{1:0000}.png", qid, pid);
+                    foreach (var area in question.areas)
+                    {
+                        var topLeft = BiLenearInterpoltation(area.x, area.y);
+                        var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
+                        fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Blue, 0.4f);
+                        var textImage = image.Clone(img => img
+                            .Crop(new Rectangle(topLeft[0], topLeft[1],
+                                bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1])));
+                        StorageFile textFile = await textFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+                        var stream = await textFile.OpenStreamForWriteAsync();
+                        var encoder = new PngEncoder();
+                        encoder.ColorType = PngColorType.Rgb;
+                        encoder.BitDepth = PngBitDepth.Bit8;
+                        textImage.SaveAsPng(stream, encoder);
+                    }
+                }
                 answers.Add(_answers);
             }
-
 
             _ = Task.Run(async () => {
                 StorageFile logFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
