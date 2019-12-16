@@ -30,7 +30,6 @@ namespace Mark2
         InterstitialAd interstitialAd = null;
         string appId = "9nrjc7500p6m";
         string adUnitId = "1100063063";
-
         public MainPage()
         {
             InitializeComponent();
@@ -38,10 +37,10 @@ namespace Mark2
             startButton.IsEnabled = false;
             saveButton.IsEnabled = false;
 
-            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 320);
+            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 370);
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
                 Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 320));
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 370));
 
             interstitialAd = new InterstitialAd();
             interstitialAd.AdReady += InterstitialAd_AdReady;

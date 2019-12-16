@@ -5,8 +5,9 @@
     xmlns:local="using:Mark2"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UI="using:Microsoft.Advertising.WinRT.UI"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="500" Height="320" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="500" Height="370" 
     >
 
     <Grid>
@@ -15,6 +16,7 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -50,5 +52,10 @@
         <Button x:Uid="SaveButton" x:Name="saveButton" Grid.Row="3" Grid.Column="2"
                 Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"
                 Click="SaveButton_Click"/>
+
+        <UI:AdControl ApplicationId="9nrjc7500p6m" AdUnitId="1100064180"
+              Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="10"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              Height="100" Width="500"/>
     </Grid>
 </Page>
