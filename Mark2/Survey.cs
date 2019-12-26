@@ -20,7 +20,8 @@ namespace Mark2
         public StorageFolder textFolder;
         public StorageFolder logFolder;
         public StorageFile csv;
-        public double threshold;
+        public double areaThreshold;
+        public double colorThreshold;
         public List<Item> items;
         List<Page> pages;
         public string resultBuffer;
@@ -146,7 +147,7 @@ namespace Mark2
 
                     item.page = pages[i % pages.Count()];
                     item.DetectSquares();
-                    await item.Recognize(threshold);
+                    await item.Recognize(areaThreshold, colorThreshold);
 
                     if ((i + 1) % pages.Count() == 1)
                     {

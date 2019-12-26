@@ -160,7 +160,7 @@ namespace Mark2
             return square;
         }
 
-        public async Task Recognize(double threshold)
+        public async Task Recognize(double areaThreshold, double colorThreshold)
         {
             answers = new List<List<int>>();
             var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
@@ -179,13 +179,13 @@ namespace Mark2
                         {
                             for (int j = topLeft[1]; j < bottomRight[1]; j++)
                             {
-                                if (image[i, j].R < 128)
+                                if (image[i, j].R < (int)((1 - colorThreshold) * 255))
                                 {
                                     count++;
                                 }
                             }
                         }
-                        if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > threshold)
+                        if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > areaThreshold)
                         {
                             _answers.Add(area.v);
                             fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Green, 0.4f);
@@ -218,7 +218,7 @@ namespace Mark2
                             for (int x = 0; x < 28; x++)
                             {
                                 data[i] = 0.0f;
-                                if (cloneImage[x, y].R < 128)
+                                if (cloneImage[x, y].R < (int)((1 - colorThreshold) * 255))
                                 {
                                     data[i] = 1.0f;
                                 }

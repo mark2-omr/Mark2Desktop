@@ -37,10 +37,10 @@ namespace Mark2
             startButton.IsEnabled = false;
             saveButton.IsEnabled = false;
 
-            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 370);
+            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Size(500, 320);
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
                 Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 370));
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 320));
 
             interstitialAd = new InterstitialAd();
             interstitialAd.AdReady += InterstitialAd_AdReady;
@@ -158,7 +158,8 @@ namespace Mark2
                 interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
             }
 
-            survey.threshold = thresholdSlider.Value / 100.0;
+            survey.areaThreshold = areaThresholdSlider.Value / 100.0;
+            survey.colorThreshold = colorThresholdSlider.Value / 100.0;
 
             Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
 
