@@ -15,8 +15,6 @@ using Windows.UI.Xaml.Navigation;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Advertising.WinRT.UI;
-
 namespace Mark2
 {
     /// <summary>
@@ -27,9 +25,6 @@ namespace Mark2
         Survey survey;
         string resultCSV = null;
 
-        InterstitialAd interstitialAd = null;
-        string appId = "9nrjc7500p6m";
-        string adUnitId = "1100063063";
         public MainPage()
         {
             InitializeComponent();
@@ -41,13 +36,6 @@ namespace Mark2
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
                 Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 320));
-
-            interstitialAd = new InterstitialAd();
-            interstitialAd.AdReady += InterstitialAd_AdReady;
-            interstitialAd.ErrorOccurred += InterstitialAd_ErrorOccurred;
-            interstitialAd.Completed += InterstitialAd_Completed;
-            interstitialAd.Cancelled += InterstitialAd_Cancelled;
-            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -149,15 +137,6 @@ namespace Mark2
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            if (InterstitialAdState.Ready == interstitialAd.State)
-            {
-                interstitialAd.Show();
-            }
-            else
-            {
-                interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
-            }
-
             survey.areaThreshold = areaThresholdSlider.Value / 100.0;
             survey.colorThreshold = colorThresholdSlider.Value / 100.0;
 
@@ -220,28 +199,6 @@ namespace Mark2
             {
                 await Windows.Storage.FileIO.WriteTextAsync(file, this.resultCSV);
             }
-        }
-
-        void InterstitialAd_AdReady(object sender, object e)
-        {
-            // Your code goes here.
-        }
-
-        void InterstitialAd_ErrorOccurred(object sender, AdErrorEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine(e);
-        }
-
-        void InterstitialAd_Completed(object sender, object e)
-        {
-            System.Diagnostics.Debug.WriteLine("Request Ad Complete");
-            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
-        }
-
-        void InterstitialAd_Cancelled(object sender, object e)
-        {
-            System.Diagnostics.Debug.WriteLine("Request Ad Cancelled");
-            interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
         }
     }
 }
