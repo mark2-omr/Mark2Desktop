@@ -140,16 +140,6 @@ namespace Mark2
             survey.areaThreshold = areaThresholdSlider.Value / 100.0;
             survey.colorThreshold = colorThresholdSlider.Value / 100.0;
 
-            Windows.UI.WindowManagement.AppWindow appWindow = await Windows.UI.WindowManagement.AppWindow.TryCreateAsync();
-
-            Frame appWindowFrame = new Frame();
-            appWindowFrame.Navigate(typeof(ProgressPage));
-            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowFrame);
-
-            ProgressPage progressPage = (ProgressPage)appWindowFrame.Content;
-            progressPage.appWindow = appWindow;
-            progressPage.survey = survey;
-
             if (survey.folder == null || survey.csv == null)
             {
                 return;
@@ -157,32 +147,30 @@ namespace Mark2
 
             await survey.SetupOutputFolders();
 
-            appWindow.RequestSize(new Size(400, 100));
-            await appWindow.TryShowAsync();
-
             Task taskMain = new Task(async () =>
             {
+                // startButton.IsEnabled = false;
                 System.Diagnostics.Debug.WriteLine("Recognizing");
 
                 await survey.Recognize(async (i, max) =>
                 {
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        progressPage.setProgress((100.0 / (double)(max)) * (i + 1));
-                    });  
+                        progressBar.Value = (100.0 / (double)(max)) * (i + 1);
+                    });
                 });
 
                 System.Diagnostics.Debug.WriteLine("Finished");
 
                 resultCSV = survey.resultBuffer;
 
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     if (resultCSV != null)
                     {
+                        startButton.IsEnabled = true;
                         saveButton.IsEnabled = true;
                     }
-                    await appWindow.CloseAsync();
                 });
             });
             taskMain.Start();
