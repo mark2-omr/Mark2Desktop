@@ -36,6 +36,7 @@ namespace Mark2
             Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode = 
                 Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(500, 320));
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TryResizeView(new Size(500, 320));
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -146,10 +147,10 @@ namespace Mark2
             }
 
             await survey.SetupOutputFolders();
+            startButton.IsEnabled = false;
 
             Task taskMain = new Task(async () =>
             {
-                // startButton.IsEnabled = false;
                 System.Diagnostics.Debug.WriteLine("Recognizing");
 
                 await survey.Recognize(async (i, max) =>
@@ -170,13 +171,19 @@ namespace Mark2
                     {
                         startButton.IsEnabled = true;
                         saveButton.IsEnabled = true;
+                        SaveCsv();
                     }
                 });
             });
             taskMain.Start();
         }
 
-        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveCsv();
+        }
+
+        private async void SaveCsv()
         {
             var picker = new Windows.Storage.Pickers.FileSavePicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;

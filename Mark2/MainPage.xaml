@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:UI="using:Microsoft.Advertising.WinRT.UI"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="500" Height="320"
-    >
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -43,13 +42,13 @@
 
         <TextBlock x:Uid="AreaThresholdTextBlock" Grid.Row="2" Grid.Column="0"
                    Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <Slider x:Name="areaThresholdSlider" Value="60" Maximum="95" Minimum="5"
+        <Slider x:Name="areaThresholdSlider" Value="40" Maximum="95" Minimum="5"
                 Margin="10" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                 HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 
         <TextBlock x:Uid="ColorThresholdTextBlock" Grid.Row="3" Grid.Column="0"
                    Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <Slider x:Name="colorThresholdSlider" Value="40" Maximum="95" Minimum="5"
+        <Slider x:Name="colorThresholdSlider" Value="10" Maximum="95" Minimum="5"
                 Margin="10" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
                 HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 
