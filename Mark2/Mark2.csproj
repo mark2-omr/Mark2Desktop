@@ -208,11 +208,16 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Advertising.XAML">
-      <Version>10.1811.22001</Version>
+    <PackageReference Include="Microsoft.Net.Native.Compiler">
+      <Version>2.2.8-rel-28605-00</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.9</Version>
+      <Version>6.2.10</Version>
+    </PackageReference>
+    <PackageReference Include="NPOI">
+      <Version>2.5.1</Version>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp">
       <Version>1.0.0-beta0006</Version>
@@ -225,9 +230,6 @@
     <PRIResource Include="Strings\ja-JP\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.Advertising.Xaml, Version=10.0">
-      <Name>Microsoft Advertising SDK for XAML</Name>
-    </SDKReference>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>

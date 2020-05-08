@@ -8,6 +8,7 @@ namespace Mark2
 {
     public class Question
     {
+        public string text;
         public int type;
         public List<Area> areas;
 

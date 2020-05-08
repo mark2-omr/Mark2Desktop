@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Navigation;
 using System.Threading;
 using System.Threading.Tasks;
 
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+
 namespace Mark2
 {
     /// <summary>
@@ -23,7 +26,6 @@ namespace Mark2
     public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
         Survey survey;
-        string resultCSV = null;
 
         public MainPage()
         {
@@ -105,7 +107,8 @@ namespace Mark2
             {
                 var picker = new Windows.Storage.Pickers.FileOpenPicker();
                 picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-                picker.FileTypeFilter.Add(".csv");
+                picker.FileTypeFilter.Add(".tsv");
+                picker.FileTypeFilter.Add(".txt");
                 var csv = await picker.PickSingleFileAsync();
                 if (csv != null)
                 {
@@ -163,11 +166,9 @@ namespace Mark2
 
                 System.Diagnostics.Debug.WriteLine("Finished");
 
-                resultCSV = survey.resultBuffer;
-
                 await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    if (resultCSV != null)
+                    // if (resultCSV != null)
                     {
                         startButton.IsEnabled = true;
                         saveButton.IsEnabled = true;
@@ -187,12 +188,67 @@ namespace Mark2
         {
             var picker = new Windows.Storage.Pickers.FileSavePicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            picker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+            picker.FileTypeChoices.Add("Excel File", new List<string>() { ".xlsx" });
             picker.SuggestedFileName = "result";
             Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+
+            byte[] fileBytes = null;
+            var workbook = new XSSFWorkbook();
+            var worksheet = workbook.CreateSheet("Sheet5");
+
+            var i = 0;
+            foreach (var resultRow in survey.resultRows)
+            {
+                var row = worksheet.CreateRow(i);
+                var j = 0;
+                foreach (var value in resultRow)
+                {
+                    var cell = row.CreateCell(j);
+                    var cellStyle = workbook.CreateCellStyle();
+                    cellStyle.FillPattern = NPOI.SS.UserModel.FillPattern.SolidForeground;
+
+                    if (i > 1 && value.Length == 0)
+                    {
+                        cellStyle.FillForegroundColor = NPOI.SS.UserModel.IndexedColors.Gold.Index;
+                        cell.CellStyle = cellStyle;
+                    }
+                    else if (j > 1 && value.Contains(";"))
+                    {
+                        cellStyle.FillForegroundColor = NPOI.SS.UserModel.IndexedColors.Coral.Index;
+                        cell.CellStyle = cellStyle;
+                    }
+
+                    if (value.Length > 0 && value.All(char.IsDigit))
+                    {
+                        int v = 0;
+                        if (Int32.TryParse(value, out v))
+                        {
+                            cell.SetCellValue(v);
+                        }
+                        else
+                        {
+                            cell.SetCellValue(value);
+                        }
+                    }
+                    else
+                    {
+                        cell.SetCellValue(value);
+                    }
+
+                    j++;
+                }
+                i++;
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                workbook.Write(stream);
+                fileBytes = stream.ToArray();
+            }
+
             if (file != null)
             {
-                await Windows.Storage.FileIO.WriteTextAsync(file, this.resultCSV);
+                await Windows.Storage.FileIO.WriteBytesAsync(file, fileBytes);
             }
         }
     }

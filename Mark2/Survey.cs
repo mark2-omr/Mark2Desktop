@@ -24,7 +24,7 @@ namespace Mark2
         public double colorThreshold;
         public List<Item> items;
         List<Page> pages;
-        public string resultBuffer;
+        public List<List<string>> resultRows;
         public bool StopRecognize { get; set; }
 
         public Survey()
@@ -46,12 +46,13 @@ namespace Mark2
                     reader.ReadBytes(fileBytes);
                 }
             }
-            string csvString = System.Text.Encoding.ASCII.GetString(fileBytes);
+
+            string csvString = System.Text.Encoding.GetEncoding("UTF-8").GetString(fileBytes);
             List<string> lines = csvString.Split("\n").ToList();
 
             List<int> vs = new List<int>();
-            List<string> headers = lines[0].Split(',').ToList();
-            headers.RemoveRange(0, 3);
+            List<string> headers = lines[0].Split("\t").ToList();
+            headers.RemoveRange(0, 4);
             for (int i = 0; i < headers.Count() / 4; i++)
             {
                 vs.Add(int.Parse(headers[i * 4]));
@@ -60,22 +61,23 @@ namespace Mark2
             lines.RemoveRange(0, 3);
             foreach (string line in lines)
             {
-                List<string> values = line.Split(',').ToList();
-                if (values.Count() < 3)
+                List<string> values = line.Split("\t").ToList();
+                if (values.Count() < 4)
                 {
                     continue;
                 }
 
-                int pageNumber = int.Parse(values[1]);
+                int pageNumber = int.Parse(values[2]);
                 while (pages.Count() < pageNumber)
                 {
                     pages.Add(new Page());
                 }
 
                 Question question = new Question();
-                question.type = int.Parse(values[2]);
+                question.text = values[1];
+                question.type = int.Parse(values[3]);
 
-                values.RemoveRange(0, 3);
+                values.RemoveRange(0, 4);
                 for (int i = 0; i < values.Count() / 4; i++)
                 {
                     if (values[i * 4].Length > 0 && values[(i * 4) + 1].Length > 0 &&
@@ -108,20 +110,39 @@ namespace Mark2
             var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
             mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
 
-            var buffer = "";
+            resultRows = new List<List<string>>();
+
+            var resultHeader = new List<string>();
             var numQuestions = 0;
             foreach (var page in pages)
             {
                 numQuestions += page.questions.Count();
             }
+            resultHeader.Add("No");
+            resultHeader.Add("File");
             for (var qid = 0; qid < numQuestions; qid++)
             {
-                buffer += "," + (qid + 1).ToString();
+                resultHeader.Add((qid + 1).ToString());
             }
-            buffer += "\n";
+            resultRows.Add(resultHeader);
+
+            resultHeader = new List<string>();
+            resultHeader.Add("");
+            resultHeader.Add("");
+            foreach (var page in pages)
+            {
+                foreach (var question in page.questions)
+                {
+                    resultHeader.Add(question.text);
+                }
+            }
+            resultRows.Add(resultHeader);
 
             var i = 0;
             var pid = 1;
+            var resultRow = new List<string>();
+            var fileNames = new List<string>();
+
             foreach (var file in files)
             {
                 if (StopRecognize)
@@ -132,6 +153,7 @@ namespace Mark2
                 try
                 {
                     byte[] fileBytes = null;
+
                     using (var stream = await file.OpenReadAsync())
                     {
                         fileBytes = new byte[stream.Size];
@@ -149,19 +171,24 @@ namespace Mark2
                     item.DetectSquares();
                     await item.Recognize(areaThreshold, colorThreshold);
 
+                    fileNames.Add(file.Name);
+
                     if ((i + 1) % pages.Count() == 1)
                     {
-                        buffer += pid.ToString() + ",";
+                        resultRow.Add(pid.ToString());
+                        resultRow.Add("");
                     }
                     foreach (var _answers in item.answers)
                     {
-                        buffer += String.Join(";", _answers);
-                        buffer += ",";
+                        resultRow.Add(String.Join(";", _answers));
                     }
 
                     if ((i + 1) % pages.Count() == 0)
                     {
-                        buffer += "\n";
+                        resultRow[1] = String.Join(";", fileNames);
+                        resultRows.Add(resultRow);
+                        resultRow = new List<string>();
+                        fileNames = new List<string>();
                         pid++;
                     }
 
@@ -175,7 +202,6 @@ namespace Mark2
             }
 
             StopRecognize = false;
-            resultBuffer = buffer;
         }
     }
 }
