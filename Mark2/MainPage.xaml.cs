@@ -186,10 +186,11 @@ namespace Mark2
 
         private async void SaveCsv()
         {
+            DateTime dateTime = DateTime.Now;
             var picker = new Windows.Storage.Pickers.FileSavePicker();
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             picker.FileTypeChoices.Add("Excel File", new List<string>() { ".xlsx" });
-            picker.SuggestedFileName = "result";
+            picker.SuggestedFileName = $"result_{dateTime.ToString("yyyyMMdd_HHmmss")}";
             Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
 
             byte[] fileBytes = null;

@@ -12,7 +12,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace Mark2
 {
@@ -155,7 +154,7 @@ namespace Mark2
                 xs.Max() - xs.Min(), ys.Max() - ys.Min(),
                 topLeft[0] + (int)xs.Average(), topLeft[1] + (int)ys.Average());
 
-            fillRect(square.x, square.y, square.w, square.h, Rgba32.Red, 0.8f);
+            fillRect(square.x, square.y, square.w, square.h, Rgba32.ParseHex("#FF0000FF"), 0.8f);
 
             return square;
         }
@@ -188,11 +187,11 @@ namespace Mark2
                         if ((double)count / ((bottomRight[0] - topLeft[0]) * (bottomRight[1] - topLeft[1])) > areaThreshold)
                         {
                             _answers.Add(area.v);
-                            fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Green, 0.4f);
+                            fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#00FF00FF"), 0.4f);
                         }
                         else
                         {
-                            fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Red, 0.4f);
+                            fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#FF0000FF"), 0.4f);
                         }
 
                     }
@@ -233,7 +232,6 @@ namespace Mark2
                         List<float> v = new List<float>();
                         foreach (var item in modelOutput.Outputs)
                         {
-                            System.Diagnostics.Debug.WriteLine("{0}:{1}", item.Key, item.Value);
                             TensorFloat outTensor = (TensorFloat)item.Value;
                             v = outTensor.GetAsVectorView().ToList();
                         }
@@ -243,7 +241,7 @@ namespace Mark2
                             _answers.Add(v.IndexOf(v.Max()));
                         }
 
-                        fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Blue, 0.4f);
+                        fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
                     }
                 }
                 else if (question.type == 3)
@@ -253,7 +251,7 @@ namespace Mark2
                     {
                         var topLeft = BiLenearInterpoltation(area.x, area.y);
                         var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
-                        fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.Blue, 0.4f);
+                        fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
                         var textImage = image.Clone(img => img
                             .Crop(new Rectangle(topLeft[0], topLeft[1],
                                 bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1])));
@@ -269,7 +267,7 @@ namespace Mark2
             }
 
             _ = Task.Run(async () => {
-                StorageFile logFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+                StorageFile logFile = await logFolder.CreateFileAsync(Path.GetFileNameWithoutExtension(name) + ".png", CreationCollisionOption.ReplaceExisting);
                 var stream = await logFile.OpenStreamForWriteAsync();
                 var encoder = new PngEncoder();
                 encoder.ColorType = PngColorType.Rgb;
