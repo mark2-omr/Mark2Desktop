@@ -173,7 +173,7 @@ namespace Mark2
 
                     fileNames.Add(file.Name);
 
-                    if ((i + 1) % pages.Count() == 1)
+                    if ((i + 1) % pages.Count() == 1 || pages.Count() == 1)
                     {
                         resultRow.Add(pid.ToString());
                         resultRow.Add("");
