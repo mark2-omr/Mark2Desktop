@@ -26,8 +26,8 @@
     <PackageCertificateThumbprint>FFB8558330301C51BDA03DAF06EA0AE6D354E5BC</PackageCertificateThumbprint>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppInstallerUri>https://mark2.defrag.works/debug</AppInstallerUri>
-    <AppxPackageDir>C:\Users\kaoru\Documents\GitHub\Mark2\docs\debug\</AppxPackageDir>
+    <AppInstallerUri>https://mark2.defrag.works/dbg</AppInstallerUri>
+    <AppxPackageDir>C:\Users\kaoru\Documents\GitHub\Mark2\docs\dbg\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
