@@ -9,7 +9,7 @@
   <Identity
     Name="57659defrag.works.Mark2Desktop"
     Publisher="CN=19806879-553C-41FF-83AC-EC05CC930EDE"
-    Version="1.0.15.0" />
+    Version="1.0.16.0" />
 
   <mp:PhoneIdentity PhoneProductId="398c938a-0505-4100-849c-ac93c964455c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -35,15 +35,14 @@
         DisplayName="Mark2 Desktop"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Mark2"
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        Description="Mark2" BackgroundColor="#0078D7">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png">
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png"  BackgroundColor="#0078D7"/>
       </uap:VisualElements>
     </Application>
   </Applications>
 
   <Capabilities>
-    <Capability Name="internetClient" />
-  </Capabilities>
+    <Capability Name="internetClient"/></Capabilities>
 </Package>

@@ -22,12 +22,12 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>FFB8558330301C51BDA03DAF06EA0AE6D354E5BC</PackageCertificateThumbprint>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppInstallerUri>https://mark2.defrag.works/install</AppInstallerUri>
-    <AppxPackageDir>C:\Users\kaoru\Documents\GitHub\Mark2\docs\install\</AppxPackageDir>
+    <AppInstallerUri>https://mark2.defrag.works/debug</AppInstallerUri>
+    <AppxPackageDir>C:\Users\kaoru\Documents\GitHub\Mark2\docs\debug\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
