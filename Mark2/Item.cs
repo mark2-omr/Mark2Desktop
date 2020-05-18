@@ -226,7 +226,7 @@ namespace Mark2
                         }
 
                         TensorFloat tensor = TensorFloat.CreateFromArray(new long[] { 1, 1, 28, 28 }, data);
-                        binding.Bind("0", tensor);
+                        binding.Bind("input.1", tensor);
 
                         var modelOutput = await mnistSession.EvaluateAsync(binding, "run");
                         List<float> v = new List<float>();
