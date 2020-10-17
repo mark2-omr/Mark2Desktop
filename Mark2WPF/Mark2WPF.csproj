@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Mark2\Area.cs" Link="Area.cs" />
+    <Compile Include="..\Mark2\ItemBase.cs" Link="ItemBase.cs" />
+    <Compile Include="..\Mark2\Page.cs" Link="Page.cs" />
+    <Compile Include="..\Mark2\Question.cs" Link="Question.cs" />
+    <Compile Include="..\Mark2\Square.cs" Link="Square.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>

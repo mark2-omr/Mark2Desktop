@@ -130,6 +130,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Area.cs" />
+    <Compile Include="ItemBase.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Question.cs" />
