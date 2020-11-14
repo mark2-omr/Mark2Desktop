@@ -14,6 +14,21 @@ namespace Mark2
 {
     class Item : ItemBase
     {
+        private string textFolderPath;
+        private string logFolderPath;
+        
+        public Item(int pid, string fileName, Image<Rgba32> image, string textFolderPath, string logFolderPath)
+        {
+            this.pid = pid;
+            this.name = fileName;
+            this.image = image;
+            this.logImage = image.Clone();
+            this.textFolderPath = textFolderPath;
+            this.logFolderPath = logFolderPath;
+            // TODO: this.ministModel = ministModel;
+            answers = new List<List<int>>();
+        }
+
         public async Task Recognize(double areaThreshold, double colorThreshold)
         {
             answers = new List<List<int>>();
@@ -81,6 +96,7 @@ namespace Mark2
                             }
                         }
 
+                        // TODO: 数字認識はまだコメントアウトされているため後で対応する
                         //TensorFloat tensor = TensorFloat.CreateFromArray(new long[] { 1, 1, 28, 28 }, data);
                         //binding.Bind("input.1", tensor);
 
