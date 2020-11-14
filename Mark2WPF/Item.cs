@@ -69,6 +69,7 @@ namespace Mark2
                 }
                 else if (question.type == 2)
                 {
+                    // TODO: 数字認識は後で対応
                     //var binding = new LearningModelBinding(mnistSession);
 
                     foreach (var area in question.areas)

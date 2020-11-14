@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Mark2;
+using Microsoft.Win32;
+using System.IO;
 
 namespace Mark2WPF
 {
@@ -20,15 +23,28 @@ namespace Mark2WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        Survey survey;
         
         public MainWindow()
         {
             InitializeComponent();
+            survey = new Survey();
         }
 
         private void ImageFolderButton_Click(object sender, RoutedEventArgs e)
         {
+            survey.folderPath = null;
+            imageFolderPathTextBlock.Text = "";
 
+            var picker = new OpenFileDialog();
+            picker.FileName = "Select Folder";
+            picker.CheckFileExists = false;
+
+            if (picker.ShowDialog() == true)
+            {
+                survey.folderPath = System.IO.Path.GetDirectoryName(picker.FileName);
+                imageFolderPathTextBlock.Text = survey.folderPath;
+            }
         }
     }
 }

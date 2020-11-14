@@ -30,6 +30,9 @@ namespace Mark2
 
         public Survey()
         {
+            folderPath = null;
+            csvPath = null;
+
             items = new List<Item>();
             pages = new List<Page>();
             StopRecognize = false;
