@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Windows.Storage;
-using Windows.AI.MachineLearning;
+//using Windows.AI.MachineLearning;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace Mark2
 {
@@ -23,12 +25,13 @@ namespace Mark2
         public Image<Rgba32> logImage;
         public StorageFolder textFolder;
         public StorageFolder logFolder;
-        public LearningModel mnistModel;
+        //public LearningModel mnistModel;
+        public byte[] mnistModelByte;
         List<Square> squares;
         public Page page;
         public List<List<int>> answers;
 
-        public Item(int pid, string name, Image<Rgba32> image, StorageFolder textFolder, StorageFolder logFolder, LearningModel mnistModel)
+        public Item(int pid, string name, Image<Rgba32> image, StorageFolder textFolder, StorageFolder logFolder, byte[] mnistModel)
         {
             this.pid = pid;
             this.name = name;
@@ -36,7 +39,8 @@ namespace Mark2
             this.logImage = image.Clone();
             this.textFolder = textFolder;
             this.logFolder = logFolder;
-            this.mnistModel = mnistModel;
+            //this.mnistModel = mnistModel;
+            this.mnistModelByte = mnistModel;
             answers = new List<List<int>>();
         }
 
@@ -162,9 +166,12 @@ namespace Mark2
         public async Task Recognize(double areaThreshold, double colorThreshold)
         {
             answers = new List<List<int>>();
-            var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
+            //var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
+            var session = new InferenceSession(this.mnistModelByte);
+
             foreach (var (question, qid) in page.questions.Select((question, qid) => (question, qid)))
             {
+                System.Diagnostics.Debug.WriteLine("{0}", question.type);
                 var _answers = new List<int>();
                 if (question.type == 1)
                 {
@@ -198,7 +205,7 @@ namespace Mark2
                 }
                 else if (question.type == 2)
                 {
-                    var binding = new LearningModelBinding(mnistSession);
+                    //var binding = new LearningModelBinding(mnistSession);
 
                     foreach (var area in question.areas)
                     {
@@ -212,6 +219,9 @@ namespace Mark2
 
                         var data = new float[1 * 1 * 28 * 28];
                         int i = 0;
+
+
+
                         for (int y = 0; y < 28; y++)
                         {
                             for (int x = 0; x < 28; x++)
@@ -225,23 +235,47 @@ namespace Mark2
                             }
                         }
 
-                        TensorFloat tensor = TensorFloat.CreateFromArray(new long[] { 1, 1, 28, 28 }, data);
-                        binding.Bind("input.1", tensor);
+                        //TensorFloat tensor = TensorFloat.CreateFromArray(new long[] { 1, 1, 28, 28 }, data);
+                        //binding.Bind("0", tensor);
 
-                        var modelOutput = await mnistSession.EvaluateAsync(binding, "run");
-                        List<float> v = new List<float>();
-                        foreach (var item in modelOutput.Outputs)
+                        //var modelOutput = await mnistSession.EvaluateAsync(binding, "run");
+
+                        Tensor<float> tensor = new DenseTensor<float>(data, session.InputMetadata.First().Value.Dimensions);
+                        var namedValues = new List<NamedOnnxValue> { NamedOnnxValue.CreateFromTensor("input.1", tensor) };
+                        var results = session.Run(namedValues);
+                        var resultValues = results.First().AsTensor<float>().ToArray();
+
+                        if (resultValues.Max() > 0.4)
                         {
-                            TensorFloat outTensor = (TensorFloat)item.Value;
-                            v = outTensor.GetAsVectorView().ToList();
+                            _answers.Add(Array.IndexOf(resultValues, resultValues.Max()));
                         }
 
-                        if (v.Max() > 0.4)
-                        {
-                            _answers.Add(v.IndexOf(v.Max()));
-                        }
+                        //List<float> v = new List<float>();
+                        //foreach (var item in modelOutput.Outputs)
+                        //{
+                        //    TensorFloat outTensor = (TensorFloat)item.Value;
+                        //    v = outTensor.GetAsVectorView().ToList();
+                        //}
+
+                        //if (v.Max() > 0.4)
+                        //{
+                        //    _answers.Add(v.IndexOf(v.Max()));
+                        //}
+                        var name = String.Format("mnist_{0:0000}_{1:0000}_answer_{2}.png", qid, pid, Array.IndexOf(resultValues, resultValues.Max()));
+
+                        StorageFile textFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+                        var stream = await textFile.OpenStreamForWriteAsync();
+                        var encoder = new PngEncoder();
+                        encoder.ColorType = PngColorType.Rgb;
+                        encoder.BitDepth = PngBitDepth.Bit8;
+
+                        cloneImage.SaveAsPng(stream, encoder);
+                        
 
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
+
+
+                      
                     }
                 }
                 else if (question.type == 3)

@@ -92,6 +92,7 @@ namespace Mark2
                 }
                 pages[pageNumber - 1].questions.Add(question);
             }
+            System.Diagnostics.Debug.WriteLine("OK");
         }
 
         public async Task SetupOutputFolders()
@@ -108,7 +109,21 @@ namespace Mark2
             var files = await folder.GetFilesAsync();
             LearningModel mnistModel;
             var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
-            mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
+
+            byte[] bytesModel = null;
+            using (var modelStream = await modelFile.OpenReadAsync())
+            {
+                bytesModel = new byte[modelStream.Size];
+                using (var reader = new Windows.Storage.Streams.DataReader(modelStream))
+                {
+                    await reader.LoadAsync((uint)modelStream.Size);
+                    reader.ReadBytes(bytesModel);
+                }
+            }
+
+
+
+            //mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
 
             resultRows = new List<List<string>>();
 
@@ -165,7 +180,7 @@ namespace Mark2
                     }
 
                     var image = Image.Load(fileBytes);
-                    Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel);
+                    Item item = new Item(pid, file.Name, image, textFolder, logFolder, bytesModel);
 
                     item.page = pages[i % pages.Count()];
                     item.DetectSquares();
