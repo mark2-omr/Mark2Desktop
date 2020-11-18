@@ -71,18 +71,16 @@ namespace Mark2WPF
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            //survey.areaThreshold = areaThresholdSlider.Value / 100.0;
-            //survey.colorThreshold = colorThresholdSlider.Value / 100.0;
-            survey.areaThreshold = 0.4f;
-            survey.colorThreshold = 0.1f;
+            survey.areaThreshold = areaThresholdSlider.Value / 100.0;
+            survey.colorThreshold = colorThresholdSlider.Value / 100.0;
 
-            //if (survey.folder == null || survey.csv == null)
-            //{
-            //    return;
-            //}
+            if (survey.folderPath == null || survey.csvPath == null)
+            {
+                return;
+            }
 
             await survey.SetupOutputFolders();
-            //startButton.IsEnabled = false;
+            startButton.IsEnabled = false;
 
             Task taskMain = new Task(async () =>
             {
@@ -93,13 +91,14 @@ namespace Mark2WPF
                      Dispatcher.Invoke(() => {
                         progressBar.Value = (100.0 / (double)(max)) * (i + 1);
                      });
-                    //await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    //{
-                    //    progressBar.Value = (100.0 / (double)(max)) * (i + 1);
-                    //});
                 });
 
                 System.Diagnostics.Debug.WriteLine("Finished");
+
+                Dispatcher.Invoke(() => {
+                    startButton.IsEnabled = true;
+                    saveButton.IsEnabled = true;
+                });
 
                 //await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 //{
