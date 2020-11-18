@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Mark2;
 using Microsoft.Win32;
 using System.IO;
+using NPOI.XSSF.UserModel;
 
 namespace Mark2WPF
 {
@@ -69,7 +70,7 @@ namespace Mark2WPF
             
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             survey.areaThreshold = areaThresholdSlider.Value / 100.0;
             survey.colorThreshold = colorThresholdSlider.Value / 100.0;
@@ -111,6 +112,100 @@ namespace Mark2WPF
                 //});
             });
             taskMain.Start();
+        }
+
+        private async void SaveCsv()
+        {
+            DateTime dateTime = DateTime.Now;
+            //var picker = new Windows.Storage.Pickers.FileSavePicker();
+            //picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            //picker.FileTypeChoices.Add("Excel File", new List<string>() { ".xlsx" });
+            //picker.SuggestedFileName = $"result_{dateTime.ToString("yyyyMMdd_HHmmss")}";
+            //Windows.Storage.StorageFile file = await picker.PickSaveFileAsync();
+
+            string outputPath = null;
+            var picker = new SaveFileDialog();
+            picker.DefaultExt = ".xlsx";
+            picker.FileName = $"result_{dateTime.ToString("yyyyMMdd_HHmmss")}";
+
+            if (picker.ShowDialog() == true)
+            {
+                outputPath = picker.FileName;
+
+            } else
+            {
+                return;
+            }
+
+
+
+            byte[] fileBytes = null;
+            var workbook = new XSSFWorkbook();
+            var worksheet = workbook.CreateSheet("Sheet5");
+
+            var i = 0;
+            foreach (var resultRow in survey.resultRows)
+            {
+                var row = worksheet.CreateRow(i);
+                var j = 0;
+                foreach (var value in resultRow)
+                {
+                    var cell = row.CreateCell(j);
+                    var cellStyle = workbook.CreateCellStyle();
+                    cellStyle.FillPattern = NPOI.SS.UserModel.FillPattern.SolidForeground;
+
+                    if (i > 1 && value.Length == 0)
+                    {
+                        cellStyle.FillForegroundColor = NPOI.SS.UserModel.IndexedColors.Gold.Index;
+                        cell.CellStyle = cellStyle;
+                    }
+                    else if (j > 1 && value.Contains(";"))
+                    {
+                        cellStyle.FillForegroundColor = NPOI.SS.UserModel.IndexedColors.Coral.Index;
+                        cell.CellStyle = cellStyle;
+                    }
+
+                    if (value.Length > 0 && value.All(char.IsDigit))
+                    {
+                        int v = 0;
+                        if (Int32.TryParse(value, out v))
+                        {
+                            cell.SetCellValue(v);
+                        }
+                        else
+                        {
+                            cell.SetCellValue(value);
+                        }
+                    }
+                    else
+                    {
+                        cell.SetCellValue(value);
+                    }
+
+                    j++;
+                }
+                i++;
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                workbook.Write(stream);
+                fileBytes = stream.ToArray();
+            }
+
+            if (outputPath != null)
+            {
+                //await Windows.Storage.FileIO.WriteBytesAsync(file, fileBytes);
+                FileStream fs = new FileStream(outputPath, FileMode.Create);
+                fs.Write(fileBytes);
+
+                fs.Close();
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveCsv();
         }
     }
 }
