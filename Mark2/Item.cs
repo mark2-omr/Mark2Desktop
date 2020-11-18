@@ -227,6 +227,7 @@ namespace Mark2
                         i = 0;
 
 
+                        // 入力されている座標の平均を計算
                         float average_x = 0.0f;
                         float average_y = 0.0f;
                         float average_count = 0.0f;
@@ -247,12 +248,11 @@ namespace Mark2
                         average_x = average_x / average_count;
                         average_y = average_y / average_count;
 
+                        // 移動方向
                         int dx = 14 - (int)average_x;
                         int dy = 14 - (int)average_y;
 
                         float color_scale = 1.0f;
-
-
 
                         for (int y = 0; y < 28; y++)
                         {
@@ -265,6 +265,7 @@ namespace Mark2
                                 //}
                                 //i++;
 
+                                // なるべく中心に移動する
                                 int px = x + dx;
                                 int py = y + dy;
 
@@ -276,6 +277,7 @@ namespace Mark2
                             }
                         }
 
+                        // 最大値に合わせて全体の値を調整する
                         color_scale = 1.0f / data.Max();
 
                         for (i = 0; i < data.Length; i++)
@@ -297,7 +299,7 @@ namespace Mark2
                         var results = session.Run(namedValues);
                         var resultValues = results.First().AsTensor<float>().ToArray();
 
-                        if (resultValues.Max() > 0.4)
+                        if (resultValues.Max() > -1.85f)
                         {
                             _answers.Add(Array.IndexOf(resultValues, resultValues.Max()));
                         }
