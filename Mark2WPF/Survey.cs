@@ -108,8 +108,8 @@ namespace Mark2
             //logFolder = await folder.CreateFolderAsync($"log_{dateTime.ToString("yyyyMMdd_HHmmss")}",
             //    Windows.Storage.CreationCollisionOption.ReplaceExisting);
 
-            textFolderPath = folderPath + Path.PathSeparator + $"text_{dateTime.ToString("yyyyMMdd_HHmmss")}";
-            logFolderPath = folderPath + Path.PathSeparator + $"log_{dateTime.ToString("yyyyMMdd_HHmmss")}";
+            textFolderPath = folderPath + Path.DirectorySeparatorChar + $"text_{dateTime.ToString("yyyyMMdd_HHmmss")}";
+            logFolderPath = folderPath + Path.DirectorySeparatorChar + $"log_{dateTime.ToString("yyyyMMdd_HHmmss")}";
 
             // TODO: 動作を確認する
             Directory.CreateDirectory(textFolderPath);

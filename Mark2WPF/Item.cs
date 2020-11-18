@@ -132,7 +132,7 @@ namespace Mark2
                         //StorageFile textFile = await textFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
 
                         //var stream = await textFile.OpenStreamForWriteAsync();
-                        var stream = "output\\" + name;
+                        var stream = textFolderPath + Path.DirectorySeparatorChar + "output" + Path.DirectorySeparatorChar + name;
                         var encoder = new PngEncoder();
                         encoder.ColorType = PngColorType.Rgb;
                         encoder.BitDepth = PngBitDepth.Bit8;
@@ -145,7 +145,7 @@ namespace Mark2
             _ = Task.Run(async () => {
                 //StorageFile logFile = await logFolder.CreateFileAsync(Path.GetFileNameWithoutExtension(name) + ".png", CreationCollisionOption.ReplaceExisting);
                 //var stream = await logFile.OpenStreamForWriteAsync();
-                var stream = "log\\" + Path.GetFileNameWithoutExtension(name) + ".png";
+                var stream = logFolderPath + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(name) + ".png";
                 var encoder = new PngEncoder();
                 encoder.ColorType = PngColorType.Rgb;
                 encoder.BitDepth = PngBitDepth.Bit8;
