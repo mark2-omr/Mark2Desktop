@@ -23,12 +23,12 @@
         <Label Content="画像フォルダー" HorizontalAlignment="Left" Margin="114,0,0,0" VerticalAlignment="Center" Width="86"/>
         <Label Content="座標ファイル" HorizontalAlignment="Left" Margin="114,0,0,0" Grid.Row="1" VerticalAlignment="Center" RenderTransformOrigin="-0.623,0.51" Width="86" Height="27"/>
         <Button Content="参照" Grid.Column="1" HorizontalAlignment="Center" Margin="0,29,0,0" VerticalAlignment="Top" Width="180" Click="ImageFolderButton_Click"/>
-        <Button Content="参照" Grid.Column="1" HorizontalAlignment="Center" Margin="0,30,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.972,0.353" Width="180"/>
+        <Button Content="参照" Grid.Column="1" HorizontalAlignment="Center" Margin="0,30,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.972,0.353" Width="180" Click="OpenCsvButton_Click"/>
         <Label Content="面積閾値" HorizontalAlignment="Left" Margin="114,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="76"/>
         <Label Content="色閾値" HorizontalAlignment="Left" Margin="121,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="74"/>
-        <Button Content="開始" Grid.Column="1" HorizontalAlignment="Left" Margin="150,0,0,0" Grid.Row="4" VerticalAlignment="Center"/>
+        <Button Content="開始" Grid.Column="1" HorizontalAlignment="Left" Margin="150,0,0,0" Grid.Row="4" VerticalAlignment="Center" Click="Button_Click"/>
         <Button Content="保存" Grid.Column="2" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="4" VerticalAlignment="Center"/>
-        <ProgressBar HorizontalAlignment="Left" Height="10" Margin="10,0,0,0" Grid.Row="5" VerticalAlignment="Center" Width="780" Grid.ColumnSpan="3"/>
+        <ProgressBar HorizontalAlignment="Left" x:Name="progressBar" Height="10" Margin="10,0,0,0" Grid.Row="5" VerticalAlignment="Center" Width="780" Grid.ColumnSpan="3"/>
         <Slider Grid.Column="1" HorizontalAlignment="Left" Margin="10,31,0,0" Grid.Row="2" VerticalAlignment="Top" Width="580" Grid.ColumnSpan="2"/>
         <Slider Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="580" Grid.ColumnSpan="2"/>
         <TextBlock Grid.Column="2" x:Name="imageFolderPathTextBlock" HorizontalAlignment="Left" Margin="10,31,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="373"/>
