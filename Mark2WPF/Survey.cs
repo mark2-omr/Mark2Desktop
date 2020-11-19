@@ -120,7 +120,6 @@ namespace Mark2
             //var files = await folder.GetFilesAsync();
             var files = Directory.GetFiles(this.folderPath);
 
-            // TODO: 文字認識は後で対応する
             //LearningModel mnistModel;
             //var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
             //mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);

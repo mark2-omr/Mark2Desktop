@@ -130,6 +130,14 @@ namespace Mark2
                             _answers.Add(Array.IndexOf(resultValues, resultValues.Max()));
                         }
 
+                        string result_value = resultValues.Max().ToString().Replace(".", "__");
+                        var name = String.Format("mnist_{0:0000}_{1:0000}_answer_{2}_{3}.png", qid, pid, Array.IndexOf(resultValues, resultValues.Max()), result_value);
+                        var encoder = new PngEncoder();
+                        encoder.ColorType = PngColorType.Rgb;
+                        encoder.BitDepth = PngBitDepth.Bit8;
+
+                        cloneImage.SaveAsPng(logFolderPath + Path.DirectorySeparatorChar + name, encoder);
+
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
                     }
                 }
