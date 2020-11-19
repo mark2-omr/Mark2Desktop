@@ -10,14 +10,18 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
+
 namespace Mark2
 {
     class Item : ItemBase
     {
         private string textFolderPath;
         private string logFolderPath;
+        private byte[] mnistModelByte;
         
-        public Item(int pid, string fileName, Image<Rgba32> image, string textFolderPath, string logFolderPath)
+        public Item(int pid, string fileName, Image<Rgba32> image, string textFolderPath, string logFolderPath, byte[] mnistModel)
         {
             this.pid = pid;
             this.name = fileName;
@@ -25,7 +29,9 @@ namespace Mark2
             this.logImage = image.Clone();
             this.textFolderPath = textFolderPath;
             this.logFolderPath = logFolderPath;
-            // TODO: this.ministModel = ministModel;
+            // this.ministModel = ministModel;
+            this.mnistModelByte = mnistModel;
+
             answers = new List<List<int>>();
         }
 
@@ -33,6 +39,7 @@ namespace Mark2
         {
             answers = new List<List<int>>();
             //var mnistSession = new LearningModelSession(mnistModel, new LearningModelDevice(LearningModelDeviceKind.Default));
+            var session = new InferenceSession(this.mnistModelByte);
 
             foreach (var (question, qid) in page.questions.Select((question, qid) => (question, qid)))
             {
@@ -97,7 +104,6 @@ namespace Mark2
                             }
                         }
 
-                        // TODO: 数字認識はまだコメントアウトされているため後で対応する
                         //TensorFloat tensor = TensorFloat.CreateFromArray(new long[] { 1, 1, 28, 28 }, data);
                         //binding.Bind("input.1", tensor);
 
@@ -113,6 +119,16 @@ namespace Mark2
                         //{
                         //    _answers.Add(v.IndexOf(v.Max()));
                         //}
+
+                        Tensor<float> tensor = new DenseTensor<float>(data, session.InputMetadata.First().Value.Dimensions);
+                        var namedValues = new List<NamedOnnxValue> { NamedOnnxValue.CreateFromTensor("input.1", tensor) };
+                        var results = session.Run(namedValues);
+                        var resultValues = results.First().AsTensor<float>().ToArray();
+
+                        if (resultValues.Max() > -1.85f)
+                        {
+                            _answers.Add(Array.IndexOf(resultValues, resultValues.Max()));
+                        }
 
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
                     }

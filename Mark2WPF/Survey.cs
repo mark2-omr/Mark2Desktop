@@ -110,11 +110,9 @@ namespace Mark2
 
             textFolderPath = folderPath + Path.DirectorySeparatorChar + $"text_{dateTime.ToString("yyyyMMdd_HHmmss")}";
             logFolderPath = folderPath + Path.DirectorySeparatorChar + $"log_{dateTime.ToString("yyyyMMdd_HHmmss")}";
-
-            // TODO: 動作を確認する
+            
             Directory.CreateDirectory(textFolderPath);
             Directory.CreateDirectory(logFolderPath);
-
         }
 
         public async Task Recognize(Action<int, int> action)
@@ -126,6 +124,14 @@ namespace Mark2
             //LearningModel mnistModel;
             //var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
             //mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
+
+            var onnx_file = File.Open("mnist_8.onnx", FileMode.Open);
+            BinaryReader br = new BinaryReader(onnx_file);
+            byte[] modelBytes = br.ReadBytes((int)onnx_file.Length);
+            br.Close();
+            onnx_file.Close();
+
+           
 
             resultRows = new List<List<string>>();
 
@@ -186,7 +192,7 @@ namespace Mark2
 
                     var image = Image.Load(fileBytes);
                     //Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel);
-                    Item item = new Item(pid, fileName, image, textFolderPath, logFolderPath);
+                    Item item = new Item(pid, fileName, image, textFolderPath, logFolderPath, modelBytes);
 
                     item.page = pages[i % pages.Count()];
                     item.DetectSquares();
