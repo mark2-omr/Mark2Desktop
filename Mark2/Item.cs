@@ -12,8 +12,8 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Microsoft.ML.OnnxRuntime;
-using Microsoft.ML.OnnxRuntime.Tensors;
+//using Microsoft.ML.OnnxRuntime;
+//using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace Mark2
 {
