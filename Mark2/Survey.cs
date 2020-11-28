@@ -121,9 +121,7 @@ namespace Mark2
                 }
             }
 
-
-
-            //mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
+            mnistModel = await LearningModel.LoadFromStorageFileAsync(modelFile);
 
             resultRows = new List<List<string>>();
 
@@ -180,7 +178,7 @@ namespace Mark2
                     }
 
                     var image = Image.Load(fileBytes);
-                    Item item = new Item(pid, file.Name, image, textFolder, logFolder, bytesModel);
+                    Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel /*bytesModel*/);
 
                     item.page = pages[i % pages.Count()];
                     item.DetectSquares();
