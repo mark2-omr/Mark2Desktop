@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;CLOUDFUNCTION</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;CLOUDFUNCTION</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Mark2\Area.cs" Link="Area.cs" />
+    <Compile Include="..\Mark2\ItemBase.cs" Link="ItemBase.cs" />
+    <Compile Include="..\Mark2\Page.cs" Link="Page.cs" />
+    <Compile Include="..\Mark2\Question.cs" Link="Question.cs" />
+    <Compile Include="..\Mark2\Square.cs" Link="Square.cs" />
+  </ItemGroup>
+
+</Project>

@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//using Windows.Storage;
-//using Windows.AI.MachineLearning;
-
+#if CLOUDFUNCTION
+using Mark2CF;
+#else
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+#endif
+
 
 namespace Mark2
 {
