@@ -38,20 +38,9 @@ namespace Mark2
             StopRecognize = false;
         }
 
-        async public Task SetupPositions()
+        public void SetupPositions()
         {
-            //byte[] fileBytes = null;
-            //using (var stream = await csv.OpenReadAsync())
-            //{
-            //    fileBytes = new byte[stream.Size];
-            //    using (var reader = new Windows.Storage.Streams.DataReader(stream))
-            //    {
-            //        await reader.LoadAsync((uint)stream.Size);
-            //        reader.ReadBytes(fileBytes);
-            //    }
-            //}
-
-            //string csvString = System.Text.Encoding.GetEncoding("UTF-8").GetString(fileBytes);
+            // TODO: Google Cloud Storageから読み込む
             StreamReader csvStreamReader = new StreamReader(this.csvPath);
             string csvString = csvStreamReader.ReadToEnd();
             List<string> lines = csvString.Split("\n").ToList();
@@ -185,6 +174,7 @@ namespace Mark2
                     //        reader.ReadBytes(fileBytes);
                     //    }
                     //}
+                    // TODO: Google Cloud Storageから読み込む
                     fileBytes = File.ReadAllBytes(file);
 
                     string fileName = Path.GetFileName(file);
