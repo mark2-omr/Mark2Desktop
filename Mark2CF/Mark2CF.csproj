@@ -21,4 +21,8 @@
     <Compile Include="..\Mark2\Square.cs" Link="Square.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.6.0" />
+  </ItemGroup>
+
 </Project>

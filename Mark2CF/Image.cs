@@ -43,5 +43,17 @@ namespace Mark2CF
 
             }
         }
+
+        public Image<T> Clone()
+        {
+            // 
+            return new Image<T>();
+        }
+
+        public static Image<T> Load(byte[] imageBytes)
+        {
+
+            return new Image<T>();
+        }
     }
 }
