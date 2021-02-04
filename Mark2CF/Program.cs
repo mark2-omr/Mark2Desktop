@@ -8,12 +8,13 @@ namespace Mark2CF
     {
         static async Task Main(string[] args)
         {
+            string bucketName = "mak2-storage";
             Survey survey = new Survey();
             survey.areaThreshold = 0.4;
             survey.colorThreshold = 0.1;
 
-            survey.folderPath = "gs://mark2-storage/images";
-            survey.csvPath = "gs://mark2-storage/csv/input.csv";
+            survey.folderPath = "gs://" + bucketName + "/images";
+            survey.csvPath = "gs://" + bucketName + "/csv/input.csv";
 
             // CSVファイルを読み込む
             survey.SetupPositions();

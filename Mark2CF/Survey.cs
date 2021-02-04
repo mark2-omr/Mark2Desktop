@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using Mark2CF;
+using Google.Cloud.Storage.V1;
 
 namespace Mark2
 {
@@ -14,6 +15,8 @@ namespace Mark2
         //public StorageFolder textFolder;
         //public StorageFolder logFolder;
         //public StorageFile csv;
+
+        public string bucketName;
 
         public string folderPath;
         public string csvPath;
@@ -40,8 +43,12 @@ namespace Mark2
 
         public void SetupPositions()
         {
-            // TODO: Google Cloud Storageから読み込む
-            StreamReader csvStreamReader = new StreamReader(this.csvPath);
+            // TODO: Google Cloud Storageから読み込む: テストする
+            MemoryStream memoryStreamCsv = new MemoryStream();
+            var storage = StorageClient.Create();
+            storage.DownloadObject(bucketName, csvPath, memoryStreamCsv);
+
+            StreamReader csvStreamReader = new StreamReader(memoryStreamCsv);
             string csvString = csvStreamReader.ReadToEnd();
             List<string> lines = csvString.Split("\n").ToList();
 
@@ -107,7 +114,10 @@ namespace Mark2
         public async Task Recognize(Action<int, int> action)
         {
             //var files = await folder.GetFilesAsync();
-            var files = Directory.GetFiles(this.folderPath);
+            var storage = StorageClient.Create();
+            var files = storage.ListObjects(bucketName, folderPath);
+
+            //var files = Directory.GetFiles(this.folderPath);
 
             //LearningModel mnistModel;
             //var modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/mnist_8.onnx"));
@@ -175,9 +185,12 @@ namespace Mark2
                     //    }
                     //}
                     // TODO: Google Cloud Storageから読み込む
-                    fileBytes = File.ReadAllBytes(file);
+                    MemoryStream memoryStreamFile = new MemoryStream();
+                    storage.DownloadObject(bucketName, file.Name, memoryStreamFile);
 
-                    string fileName = Path.GetFileName(file);
+                    fileBytes = memoryStreamFile.ToArray(); // File.ReadAllBytes(file);
+
+                    string fileName = file.Name; //Path.GetFileName(file);
 
                     Image<Rgba32> image = Image<Rgba32>.Load(fileBytes);
                     //Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel);
