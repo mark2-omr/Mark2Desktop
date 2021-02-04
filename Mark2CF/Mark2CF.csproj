@@ -26,4 +26,10 @@
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="mnist_8.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
