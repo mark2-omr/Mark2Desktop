@@ -37,10 +37,11 @@ namespace Mark2CF
             survey.areaThreshold = 0.4;
             survey.colorThreshold = 0.1;
 
-            survey.folderPath = "gs://" + bucketName + "/" + folderPath;
+            survey.bucketName = bucketName;
+            survey.folderPath = folderPath;
             survey.csvPath = "gs://" + bucketName + "/csv" + keyPath + "/input.csv";
 
-            // キーのパスにファイルがなければ処理を中止するようにする
+            // TODO: キーのパスにファイルがなければ処理を中止するようにする
             survey.SetupPositions();
 
             await survey.Recognize((i, max) =>
