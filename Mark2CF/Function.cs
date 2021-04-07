@@ -20,7 +20,7 @@ namespace Mark2CF
             }
 
             string bucketName = "mark2-storage-dev";
-            string folderPath = "images" + keyPath;
+            string folderPath = "images/" + keyPath;
 
             //var storage = StorageClient.Create();
             //var objects = storage.ListObjects(bucketName);
@@ -39,13 +39,14 @@ namespace Mark2CF
 
             survey.bucketName = bucketName;
             survey.folderPath = folderPath;
-            survey.csvPath = "gs://" + bucketName + "/csv" + keyPath + "/input.csv";
+            survey.csvPath = "positions" + keyPath + "/positions.txt";
 
             // TODO: キーのパスにファイルがなければ処理を中止するようにする
             survey.SetupPositions();
 
             await survey.Recognize((i, max) =>
             {
+                Console.WriteLine("{0}/{1}", i, max);
 
             });
 

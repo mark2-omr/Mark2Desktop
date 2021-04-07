@@ -45,12 +45,17 @@ namespace Mark2
         {
             // TODO: Google Cloud Storageから読み込む: テストする
             MemoryStream memoryStreamCsv = new MemoryStream();
+
             var storage = StorageClient.Create();
             storage.DownloadObject(bucketName, csvPath, memoryStreamCsv);
+            memoryStreamCsv.Position = 0;
 
             StreamReader csvStreamReader = new StreamReader(memoryStreamCsv);
             string csvString = csvStreamReader.ReadToEnd();
+
+
             List<string> lines = csvString.Split("\n").ToList();
+
 
             List<int> vs = new List<int>();
             List<string> headers = lines[0].Split("\t").ToList();
@@ -166,6 +171,11 @@ namespace Mark2
 
             foreach (var file in files)
             {
+                if (file.Name.IndexOf(".png") < 0)
+                {
+                    continue;
+                }
+
                 if (StopRecognize)
                 {
                     break;
@@ -173,6 +183,8 @@ namespace Mark2
 
                 try
                 {
+                    Console.WriteLine(file.Name);
+
                     byte[] fileBytes = null;
 
                     //using (var stream = await file.OpenReadAsync())
@@ -187,6 +199,7 @@ namespace Mark2
                     // TODO: Google Cloud Storageから読み込む
                     MemoryStream memoryStreamFile = new MemoryStream();
                     storage.DownloadObject(bucketName, file.Name, memoryStreamFile);
+                    memoryStreamFile.Position = 0;
 
                     fileBytes = memoryStreamFile.ToArray(); // File.ReadAllBytes(file);
 
@@ -227,7 +240,8 @@ namespace Mark2
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine(e);
+                    //System.Diagnostics.Debug.WriteLine(e);
+                    Console.WriteLine(e);
                 }
             }
 
