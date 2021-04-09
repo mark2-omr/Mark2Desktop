@@ -4,6 +4,7 @@ using Mark2;
 //using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Mark2CF
 {
@@ -50,6 +51,10 @@ namespace Mark2CF
             string url = String.Concat("http://0.0.0.0:", port);
 
             return Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddConsole();
+                })
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>().UseUrls(url);
                 });

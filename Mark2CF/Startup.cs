@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Mark2;
 
 namespace Mark2CF
 {
@@ -27,8 +28,32 @@ namespace Mark2CF
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    var target = Environment.GetEnvironmentVariable("TARGET") ?? "World";
-                    await context.Response.WriteAsync($"Hello");
+                    string bucketName = "mark2-storage-dev";
+
+                    string keyPath = "";
+
+                    string folderPath = "images/" + keyPath;
+
+                    Survey survey = new Survey();
+                    survey.areaThreshold = 0.4;
+                    survey.colorThreshold = 0.1;
+
+                    survey.bucketName = bucketName;
+                    survey.folderPath = folderPath;
+                    survey.csvPath = "positions/" + keyPath + "positions.txt";
+
+                    survey.SetupPositions();
+
+
+                    int x = 0;
+
+                    await survey.Recognize((i, max) => {
+                        //System.Diagnostics.Debug.
+                        Console.WriteLine("{0}/{1}", i, max);
+                        x++;
+                    });
+
+                    await context.Response.WriteAsync(x.ToString());
                 });
             });
         }

@@ -43,8 +43,15 @@ namespace Mark2CF
         private Bitmap image = null;
 
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+
+        public int Width
+        {
+            get { return image.Width; }
+        }
+
+        public int Height { 
+            get { return image.Height; }
+        }
 
         public T this[int x, int y]
         {
@@ -66,21 +73,30 @@ namespace Mark2CF
             }
         }
 
+        private void SetImage(Bitmap bitmap)
+        {
+            this.image = (Bitmap)bitmap.Clone();
+        }
+
         public Image()
         {
             //pngImage = new ImagePng.ImagePng();
+            image = new Bitmap(512, 512);
         }
 
         public void Load(Stream stream)
         {
             //pngImage.Load(stream);
             image = new Bitmap(stream);
+            Console.WriteLine("{0}, {1}", image.Width, image.Height);
         }
 
         public Image<T> Clone()
         {
-            // 
-            return new Image<T>();
+            var i = new Image<T>();
+            i.SetImage(this.image);
+             
+            return i;
         }
 
         public static Image<T> Load(byte[] imageBytes)

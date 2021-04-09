@@ -3,7 +3,7 @@
     "Mark2CF": {
       "commandName": "Project",
       "environmentVariables": {
-        "GOOGLE_APPLICATION_CREDENTIALS": "..\\..\\..\\..\\..\\gcp\\credential.json"
+        "GOOGLE_APPLICATION_CREDENTIALS": "..\\..\\gcp\\credential.json"
       }
     }
   }
