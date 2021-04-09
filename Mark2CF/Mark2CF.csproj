@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,12 +19,13 @@
     <Compile Include="..\Mark2\Page.cs" Link="Page.cs" />
     <Compile Include="..\Mark2\Question.cs" Link="Question.cs" />
     <Compile Include="..\Mark2\Square.cs" Link="Square.cs" />
+    <Compile Include="Dockerfile" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Cloud.Storage.V1" Version="3.4.0" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.6.0" />
-    <PackageReference Include="Google.Cloud.Functions.Hosting" Version="1.0.0-beta04" />
+    <!--<PackageReference Include="Google.Cloud.Functions.Hosting" Version="1.0.0-beta04" />-->
   </ItemGroup>
 
   <ItemGroup>

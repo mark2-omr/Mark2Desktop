@@ -1,5 +1,5 @@
-﻿using Google.Cloud.Functions.Framework;
-using Microsoft.AspNetCore.Http;
+﻿//using Google.Cloud.Functions.Framework;
+//using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.Text;
 using Mark2;
 using Google.Cloud.Storage.V1;
 
+/*
 namespace Mark2CF
 {
     class Function : IHttpFunction
@@ -54,3 +55,4 @@ namespace Mark2CF
         }
     }
 }
+*/
