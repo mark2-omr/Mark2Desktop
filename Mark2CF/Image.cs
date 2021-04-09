@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ImagePng;
 using System.IO;
+using System.Drawing;
 
 namespace Mark2CF
 {
@@ -38,7 +39,9 @@ namespace Mark2CF
     }
     public class Image<T> where T : IColor, new()
     {
-        private ImagePng.ImagePng pngImage = null;
+        //private ImagePng.ImagePng pngImage = null;
+        private Bitmap image = null;
+
 
         public int Width { get; set; }
         public int Height { get; set; }
@@ -47,7 +50,8 @@ namespace Mark2CF
         {
             get
             {
-                ColorRGBA color = pngImage.GetPixel(x, y);
+                //ColorRGBA color = pngImage.GetPixel(x, y);
+                var color = image.GetPixel(x, y);
 
                 T pixel = new T();
                 pixel.SetPixel(color.R, color.G, color.B, color.A);
@@ -64,12 +68,13 @@ namespace Mark2CF
 
         public Image()
         {
-            pngImage = new ImagePng.ImagePng();
+            //pngImage = new ImagePng.ImagePng();
         }
 
         public void Load(Stream stream)
         {
-            pngImage.Load(stream);
+            //pngImage.Load(stream);
+            image = new Bitmap(stream);
         }
 
         public Image<T> Clone()

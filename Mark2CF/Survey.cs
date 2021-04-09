@@ -16,7 +16,7 @@ namespace Mark2
         //public StorageFolder logFolder;
         //public StorageFile csv;
 
-        public string bucketName;
+        public string bucketName = null;
 
         public string folderPath;
         public string csvPath;
@@ -24,8 +24,8 @@ namespace Mark2
         public string textFolderPath;
         public string logFolderPath;
 
-        public double areaThreshold;
-        public double colorThreshold;
+        public double areaThreshold = 0;
+        public double colorThreshold = 0;
         public List<Item> items;
         List<Page> pages;
         public List<List<string>> resultRows;
