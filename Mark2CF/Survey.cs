@@ -171,7 +171,7 @@ namespace Mark2
 
             foreach (var file in files)
             {
-                if (file.Name.IndexOf(".png") < 0)
+                if (file.Name.IndexOf(".jpg") < 0)
                 {
                     continue;
                 }
