@@ -29,6 +29,7 @@ namespace Mark2CF
                 endpoints.MapGet("/", async context =>
                 {
                     int x = 0;
+                    string response = "";
 
                     string key = context.Request.Query["key"];
 
@@ -60,9 +61,16 @@ namespace Mark2CF
                             Console.WriteLine("{0}/{1}", i, max);
                             x++;
                         });
+
+                        foreach (var row in survey.resultRows)
+                        {
+                            response += String.Join(',', row) + "\n";
+                        }
                     }
 
-                    await context.Response.WriteAsync(x.ToString());
+                    context.Response.ContentType = "text/plain; charset=UTF-8";
+
+                    await context.Response.WriteAsync(response);
                 });
             });
         }
