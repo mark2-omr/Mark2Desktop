@@ -183,8 +183,6 @@ namespace Mark2
 
                 try
                 {
-                    Console.WriteLine(file.Name);
-
                     byte[] fileBytes = null;
 
                     //using (var stream = await file.OpenReadAsync())

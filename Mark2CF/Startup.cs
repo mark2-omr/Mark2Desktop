@@ -28,30 +28,39 @@ namespace Mark2CF
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    string bucketName = "mark2-storage-dev";
-
-                    string keyPath = "";
-
-                    string folderPath = "images/" + keyPath;
-
-                    Survey survey = new Survey();
-                    survey.areaThreshold = 0.4;
-                    survey.colorThreshold = 0.1;
-
-                    survey.bucketName = bucketName;
-                    survey.folderPath = folderPath;
-                    survey.csvPath = "positions/" + keyPath + "positions.txt";
-
-                    survey.SetupPositions();
-
-
                     int x = 0;
 
-                    await survey.Recognize((i, max) => {
-                        //System.Diagnostics.Debug.
-                        Console.WriteLine("{0}/{1}", i, max);
-                        x++;
-                    });
+                    string key = context.Request.Query["key"];
+
+                    if (key == null)
+                    {
+                        key = "";
+                    }
+
+                    if (key.Length > 10)
+                    {
+                        string bucketName = "mark2-storage-dev";
+
+                        string keyPath = key + "/";
+
+                        string folderPath = keyPath + "images/";
+
+                        Survey survey = new Survey();
+                        survey.areaThreshold = 0.4;
+                        survey.colorThreshold = 0.1;
+
+                        survey.bucketName = bucketName;
+                        survey.folderPath = folderPath;
+                        survey.csvPath = keyPath + "positions/positions.txt";
+
+                        survey.SetupPositions();
+
+                        await survey.Recognize((i, max) =>
+                        {
+                            Console.WriteLine("{0}/{1}", i, max);
+                            x++;
+                        });
+                    }
 
                     await context.Response.WriteAsync(x.ToString());
                 });
