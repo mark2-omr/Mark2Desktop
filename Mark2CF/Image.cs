@@ -99,6 +99,28 @@ namespace Mark2CF
             return i;
         }
 
+        public void Resize(int width, int height)
+        {
+            Bitmap modifiedImage = new Bitmap(width, height);
+            Graphics g = Graphics.FromImage(modifiedImage);
+
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            g.DrawImage(this.image, 0, 0, width, height);
+
+            this.image = modifiedImage;
+        }
+
+        public void Crop(int x, int y, int width, int height)
+        {
+            Rectangle rect = new Rectangle(x, y, width, height);
+            this.image = this.image.Clone(rect, this.image.PixelFormat);
+        }
+
+        public void Save(string fileName)
+        {
+            this.image.Save(fileName);
+        }
+
         public static Image<T> Load(byte[] imageBytes)
         {
             Image<T> image = new Image<T>();

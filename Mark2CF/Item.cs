@@ -80,13 +80,15 @@ namespace Mark2
                         var topLeft = BiLenearInterpoltation(area.x, area.y);
                         var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
 
-                        // TODO: 縮小処理を追加する
+                        // 縮小処理
                         var cloneImage = image.Clone();
-                            /*.Clone(img => img
-                            .Crop(new Rectangle(topLeft[0], topLeft[1],
-                                bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
-                            .Resize(28, 28));
-                            */
+                        cloneImage.Crop(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
+                        cloneImage.Resize(28, 28);
+                        /*.Clone(img => img
+                        .Crop(new Rectangle(topLeft[0], topLeft[1],
+                            bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
+                        .Resize(28, 28));
+                        */
 
                         var data = new float[1 * 1 * 28 * 28];
                         int i = 0;
