@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ImagePng;
+//using ImagePng;
 using System.IO;
 using System.Drawing;
 
@@ -117,6 +117,11 @@ namespace Mark2CF
         }
 
         public void Save(string fileName)
+        {
+            this.image.Save(fileName);
+        }
+
+        public void SaveAsPng(string fileName)
         {
             this.image.Save(fileName);
         }

@@ -4,7 +4,8 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
-using SixLabors.ImageSharp;
+//using SixLabors.ImageSharp;
+using Mark2CF;
 
 namespace Mark2
 {
@@ -189,7 +190,7 @@ namespace Mark2
 
                     string fileName = Path.GetFileName(file);
 
-                    var image = Image.Load(fileBytes);
+                    Image<Rgba32> image = Image<Rgba32>.Load(fileBytes);
                     //Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel);
                     Item item = new Item(pid, fileName, image, textFolderPath, logFolderPath, modelBytes);
 
