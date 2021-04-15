@@ -36,6 +36,21 @@ namespace Mark2CF
             B = b;
             A = a;
         }
+
+        public byte GetR()
+        {
+            return this.R;
+        }
+
+        public byte GetG()
+        {
+            return this.G;
+        }
+
+        public byte GetB()
+        {
+            return this.B;
+        }
     }
     public class Image<T> where T : IColor, new()
     {
@@ -69,7 +84,8 @@ namespace Mark2CF
 
             set
             {
-
+                Color color = Color.FromArgb(value.GetR(), value.GetR(), value.GetB());
+                image.SetPixel(x, y, color);
             }
         }
 
