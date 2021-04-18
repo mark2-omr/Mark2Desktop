@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.AI.MachineLearning;
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+//using SixLabors.ImageSharp;
+//using SixLabors.ImageSharp.Formats.Png;
+//using SixLabors.ImageSharp.PixelFormats;
+//using SixLabors.ImageSharp.Processing;
 //using Microsoft.ML.OnnxRuntime;
 //using Microsoft.ML.OnnxRuntime.Tensors;
+using Mark2CF;
 
 namespace Mark2
 {
@@ -88,10 +89,11 @@ namespace Mark2
                         var topLeft = BiLenearInterpoltation(area.x, area.y);
                         var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
 
-                        var cloneImage = image.Clone(img => img
-                            .Crop(new Rectangle(topLeft[0], topLeft[1],
-                                bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
-                            .Resize(28, 28));
+                        var cloneImage = image.Clone();
+                        //var cloneImage = image.Clone(img => img
+                        //    .Crop(new Rectangle(topLeft[0], topLeft[1],
+                        //        bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]))
+                        //    .Resize(28, 28));
 
                         var data = new float[1 * 1 * 28 * 28];
 
@@ -200,11 +202,11 @@ namespace Mark2
 
                         StorageFile textFile = await logFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
                         var stream = await textFile.OpenStreamForWriteAsync();
-                        var encoder = new PngEncoder();
-                        encoder.ColorType = PngColorType.Rgb;
-                        encoder.BitDepth = PngBitDepth.Bit8;
+                        //var encoder = new PngEncoder();
+                        //encoder.ColorType = PngColorType.Rgb;
+                        //encoder.BitDepth = PngBitDepth.Bit8;
 
-                        cloneImage.SaveAsPng(stream, encoder);
+                        //cloneImage.SaveAsPng(stream, encoder);
                         
 
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
@@ -218,15 +220,18 @@ namespace Mark2
                         var topLeft = BiLenearInterpoltation(area.x, area.y);
                         var bottomRight = BiLenearInterpoltation(area.x + area.w, area.y + area.h);
                         fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1], Rgba32.ParseHex("#0000FFFF"), 0.4f);
-                        var textImage = image.Clone(img => img
-                            .Crop(new Rectangle(topLeft[0], topLeft[1],
-                                bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1])));
+
+                        var textImage = image.Clone();
+                        //var textImage = image.Clone(img => img
+                        //    .Crop(new Rectangle(topLeft[0], topLeft[1],
+                        //        bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1])));
+
                         StorageFile textFile = await textFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
-                        var stream = await textFile.OpenStreamForWriteAsync();
-                        var encoder = new PngEncoder();
-                        encoder.ColorType = PngColorType.Rgb;
-                        encoder.BitDepth = PngBitDepth.Bit8;
-                        textImage.SaveAsPng(stream, encoder);
+                        //var stream = await textFile.OpenStreamForWriteAsync();
+                        //var encoder = new PngEncoder();
+                        //encoder.ColorType = PngColorType.Rgb;
+                        //encoder.BitDepth = PngBitDepth.Bit8;
+                        //textImage.SaveAsPng(stream, encoder);
                     }
                 }
                 answers.Add(_answers);
@@ -234,11 +239,11 @@ namespace Mark2
 
             _ = Task.Run(async () => {
                 StorageFile logFile = await logFolder.CreateFileAsync(Path.GetFileNameWithoutExtension(name) + ".png", CreationCollisionOption.ReplaceExisting);
-                var stream = await logFile.OpenStreamForWriteAsync();
-                var encoder = new PngEncoder();
-                encoder.ColorType = PngColorType.Rgb;
-                encoder.BitDepth = PngBitDepth.Bit8;
-                logImage.SaveAsPng(stream, encoder);
+                //var stream = await logFile.OpenStreamForWriteAsync();
+                //var encoder = new PngEncoder();
+                //encoder.ColorType = PngColorType.Rgb;
+                //encoder.BitDepth = PngBitDepth.Bit8;
+                //logImage.SaveAsPng(stream, encoder);
             });
         }
 

@@ -127,10 +127,14 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\Mark2CF\IColor.cs">
+      <Link>IColor.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Area.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="ItemBase.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Page.cs" />
@@ -219,9 +223,6 @@
     </PackageReference>
     <PackageReference Include="NPOI">
       <Version>2.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="SixLabors.ImageSharp">
-      <Version>1.0.0-rc0001</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

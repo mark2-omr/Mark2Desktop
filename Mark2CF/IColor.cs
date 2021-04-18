@@ -6,6 +6,6 @@ namespace Mark2CF
 {
     public interface IColor
     {
-        public void SetPixel(byte r, byte g, byte b, byte a);
+        void SetPixel(byte r, byte g, byte b, byte a);
     }
 }

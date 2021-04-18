@@ -8,12 +8,9 @@ using System.Threading.Tasks;
 #if CLOUDFUNCTION
 using Mark2CF;
 #else
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-#endif
 
+#endif
+using Mark2CF;
 
 namespace Mark2
 {

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.AI.MachineLearning;
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
+//using SixLabors.ImageSharp;
+//using SixLabors.ImageSharp.Processing;
+using Mark2CF;
 
 using System.Threading;
 
@@ -177,7 +178,7 @@ namespace Mark2
                         }
                     }
 
-                    var image = Image.Load(fileBytes);
+                    var image = Image<Rgba32>.Load(fileBytes);
                     Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel /*bytesModel*/);
 
                     item.page = pages[i % pages.Count()];
