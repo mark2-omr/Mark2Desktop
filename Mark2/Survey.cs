@@ -166,19 +166,19 @@ namespace Mark2
 
                 try
                 {
-                    byte[] fileBytes = null;
+                    //byte[] fileBytes = null;
 
-                    using (var stream = await file.OpenReadAsync())
-                    {
-                        fileBytes = new byte[stream.Size];
-                        using (var reader = new Windows.Storage.Streams.DataReader(stream))
-                        {
-                            await reader.LoadAsync((uint)stream.Size);
-                            reader.ReadBytes(fileBytes);
-                        }
-                    }
+                    //using (var stream = await file.OpenReadAsync())
+                    //{
+                    //    fileBytes = new byte[stream.Size];
+                    //    using (var reader = new Windows.Storage.Streams.DataReader(stream))
+                    //    {
+                    //        await reader.LoadAsync((uint)stream.Size);
+                    //        reader.ReadBytes(fileBytes);
+                    //    }
+                    //}
 
-                    var image = Image<Rgba32>.Load(fileBytes);
+                    var image = Image<Rgba32>.Load(await file.OpenReadAsync());
                     Item item = new Item(pid, file.Name, image, textFolder, logFolder, mnistModel /*bytesModel*/);
 
                     item.page = pages[i % pages.Count()];

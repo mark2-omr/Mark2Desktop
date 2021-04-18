@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Drawing;
+//using System.Drawing;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Mark2CF
 {
@@ -39,17 +42,19 @@ namespace Mark2CF
     public class Image<T> where T : IColor, new()
     {
         //private ImagePng.ImagePng pngImage = null;
-        private Bitmap image = null;
+        private BitmapImage bitmapImage = null;
+        private WriteableBitmap writableBitmap = null;
+        private Rgba32[,] pixels = null;
 
 
 
         public int Width
         {
-            get { return image.Width; }
+            get { return writableBitmap.PixelWidth; }
         }
 
         public int Height { 
-            get { return image.Height; }
+            get { return writableBitmap.PixelHeight; }
         }
 
         public T this[int x, int y]
@@ -57,7 +62,7 @@ namespace Mark2CF
             get
             {
                 //ColorRGBA color = pngImage.GetPixel(x, y);
-                var color = image.GetPixel(x, y);
+                var color = pixels[x, y];
 
                 T pixel = new T();
                 pixel.SetPixel(color.R, color.G, color.B, color.A);
@@ -72,58 +77,87 @@ namespace Mark2CF
             }
         }
 
-        private void SetImage(Bitmap bitmap)
-        {
-            this.image = (Bitmap)bitmap.Clone();
-        }
+        //private void SetImage(Bitmap bitmap)
+        //{
+        //    this.image = (Bitmap)bitmap.Clone();
+        //}
 
         public Image()
         {
             //pngImage = new ImagePng.ImagePng();
-            image = new Bitmap(512, 512);
+            //image = new Bitmap(512, 512);
+            writableBitmap = new WriteableBitmap(512, 512);
         }
 
-        public void Load(Stream stream)
+        //public void Load(Stream stream)
+        //{
+        //    //pngImage.Load(stream);
+        //    image = new Bitmap(stream);
+        //    Console.WriteLine("{0}, {1}", image.Width, image.Height);
+        //}
+
+        public void LoadStream(Windows.Storage.Streams.IRandomAccessStream stream)
         {
-            //pngImage.Load(stream);
-            image = new Bitmap(stream);
-            Console.WriteLine("{0}, {1}", image.Width, image.Height);
+            bitmapImage = new BitmapImage();
+            bitmapImage.SetSource(stream);
+
+            writableBitmap = new WriteableBitmap(bitmapImage.PixelWidth, bitmapImage.PixelHeight);
+            writableBitmap.SetSource(stream);
+
+            this.pixels = new Rgba32[Width, Height];
+
+            BinaryReader binaryStream = new BinaryReader(writableBitmap.PixelBuffer.AsStream());
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    byte b = binaryStream.ReadByte();
+                    byte g = binaryStream.ReadByte();
+                    byte r = binaryStream.ReadByte();
+                    byte a = binaryStream.ReadByte();
+
+                    pixels[x, y] = new Rgba32(r, g, b);
+                }
+            }
         }
 
         public Image<T> Clone()
         {
             var i = new Image<T>();
-            i.SetImage(this.image);
+            //i.SetImage(this.image);
              
             return i;
         }
 
         public void Resize(int width, int height)
         {
-            Bitmap modifiedImage = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(modifiedImage);
+            // TODO: Resize
+            //Bitmap modifiedImage = new Bitmap(width, height);
+            //Graphics g = Graphics.FromImage(modifiedImage);
 
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
-            g.DrawImage(this.image, 0, 0, width, height);
+            //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            //g.DrawImage(this.image, 0, 0, width, height);
 
-            this.image = modifiedImage;
+            //this.image = modifiedImage;
         }
 
         public void Crop(int x, int y, int width, int height)
         {
-            Rectangle rect = new Rectangle(x, y, width, height);
-            this.image = this.image.Clone(rect, this.image.PixelFormat);
+            // TODO: Crop
+            //Rectangle rect = new Rectangle(x, y, width, height);
+            //this.image = this.image.Clone(rect, this.image.PixelFormat);
         }
 
         public void Save(string fileName)
         {
-            this.image.Save(fileName);
+            //this.image.Save(fileName);
         }
 
-        public static Image<T> Load(byte[] imageBytes)
+        public static Image<T> Load(Windows.Storage.Streams.IRandomAccessStream stream)
         {
             Image<T> image = new Image<T>();
-            image.Load(new MemoryStream(imageBytes));
+            //image.Load(new MemoryStream(imageBytes));
+            image.LoadStream(stream);
 
             return image;
         }
