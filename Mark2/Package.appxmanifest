@@ -8,10 +8,10 @@
 
   <Identity
     Name="57659defrag.works.Mark2Desktop"
-    Publisher="CN=hiroaki"
-    Version="1.0.17.0" />
+    Publisher="CN=19806879-553C-41FF-83AC-EC05CC930EDE"
+    Version="1.0.18.0" />
 
-  <mp:PhoneIdentity PhoneProductId="398c938a-0505-4100-849c-ac93c964455c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="583998f2-f96a-43f4-ad1f-e3d86c671f97" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Mark2 Desktop</DisplayName>
@@ -42,7 +42,4 @@
       </uap:VisualElements>
     </Application>
   </Applications>
-
-  <Capabilities>
-    <Capability Name="internetClient"/></Capabilities>
 </Package>

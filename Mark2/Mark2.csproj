@@ -23,12 +23,13 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>877803FD6A8BEC31EA32502C9652030ECBB91303</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>4228C0E2CACC5DF9D559F87B695A48B6DF873D0C</PackageCertificateThumbprint>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppInstallerUri>https://mark2.defrag.works/dbg</AppInstallerUri>
-    <AppxPackageDir>C:\Users\kaoru\Documents\GitHub\Mark2\Mark2\AppPackages\</AppxPackageDir>
-    <PackageCertificateKeyFile>Mark2_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageDir>C:\Users\kaoru\Desktop\</AppxPackageDir>
+    <PackageCertificateKeyFile>
+    </PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
